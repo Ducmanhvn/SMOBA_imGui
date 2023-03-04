@@ -17,6 +17,7 @@ extern bool 是否过直播;
 + (void)添加开关:(NSString *)标题 开启:(执行函数)开启 关闭:(执行函数)关闭;
 + (void)添加按钮:(NSString *)标题 点击操作:(执行函数)点击操作 尺寸:(CGRect)Rect;
 + (UIView *)添加自定义视图:(UIView *)视图;
++ (void)过直播调用:(BOOL)开关;
 @end
 
 NS_ASSUME_NONNULL_END

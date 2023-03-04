@@ -92,7 +92,10 @@ float gheight;
 
 + (void)悬浮图标{
     顶层视图=[self 获取顶层视图];
-    旋转视图=[[UIView alloc] init];
+    if (旋转视图==nil) {
+        旋转视图=[[UIView alloc] init];
+    }
+    
     旋转视图.frame=顶层视图.bounds;
     [顶层视图 addSubview:旋转视图];
     图标视图 = [[shisangeCD alloc] initWithFrame:CGRectMake(图标起点X,图标起点Y, 图标大小, 图标大小)];
@@ -251,7 +254,7 @@ float gheight;
     BT.numberOfLines = 0;
     
     BT.lineBreakMode = NSLineBreakByCharWrapping;
-    BT.text = @"  风车菜单 WX:NongShiFu";
+    BT.text = @"  风车菜单 WX:NongShiFu123";
     BT.textAlignment = NSTextAlignmentCenter;
     BT.font = [UIFont boldSystemFontOfSize:15];
     if (是否深色模式) {
@@ -348,7 +351,22 @@ float gheight;
         
         }];
 }
-
++ (void)过直播调用:(BOOL)开关
+{
+    CGRect rect=菜单视图.frame;
+    CGRect rect2=图标视图.frame;
+    //刷新UI
+    [菜单视图 removeFromSuperview];
+    菜单视图=nil;
+    [图标视图 removeFromSuperview];
+    图标视图=nil;
+    [self 悬浮图标];
+    [self 菜单];
+    菜单视图.frame=rect;
+    图标视图.frame=rect2;
+    [表格视图 reloadData];
+    
+}
 
 
 

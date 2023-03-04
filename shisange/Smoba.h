@@ -13,6 +13,7 @@ extern float mapx,mapy,半径;
 @interface TestSmoba : UIView
 - (void) Start;
 -(void)定时器;
+- (void)绘制过直播:(BOOL)开关;
 @end
 
 NS_ASSUME_NONNULL_END

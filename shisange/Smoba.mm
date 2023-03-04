@@ -53,6 +53,7 @@ static UIWindow* window;
 static NSTimer *进程定时器;
 static NSTimer *绘制定时器;
 float mapx,mapy,半径;
+static UITextField* textField;
 +(void)load
 {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(),^{
@@ -80,7 +81,10 @@ float mapx,mapy,半径;
                 wheight = [UIScreen mainScreen].bounds.size.height;
                 IView.transform=CGAffineTransformMakeRotation(M_PI*0.5);
                 IView.frame=CGRectMake(0, 0, wheight, wwidth);
-                UITextField* textField = [[UITextField alloc] init];
+                if(textField==nil){
+                    textField = [[UITextField alloc] init];
+                }
+                textField = [[UITextField alloc] init];
                 textField.secureTextEntry = 是否过直播;
                 textField.frame = IView.bounds;
                 textField.subviews.firstObject.userInteractionEnabled = YES;
@@ -110,6 +114,11 @@ float mapx,mapy,半径;
         [[NSRunLoop currentRunLoop] addTimer:进程定时器 forMode:NSRunLoopCommonModes];
         
         
+}
+- (void)绘制过直播:(BOOL)开关
+{
+    textField=nil;
+    [textField removeFromSuperview];
 }
 - (void) Start
 {
