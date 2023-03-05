@@ -27,7 +27,7 @@ UILabel *野怪血量[100];
 CAShapeLayer* 小地图方框样式;
 CAShapeLayer* 血背景样式;
 CAShapeLayer* 血圈景样式;
-CAShapeLayer* 大图血圈景样式;
+CAShapeLayer* 大图血圈样式;
 UIBezierPath* 小地图方框路径;
 UIBezierPath* Path_血背景;
 UIBezierPath* Path_血圈;
@@ -151,12 +151,12 @@ static UITextField* textField;
     血圈景样式.fillColor = UIColor.clearColor.CGColor;
     [self.layer addSublayer:血圈景样式];//标记
     
-    大图血圈景样式 = [[CAShapeLayer alloc] init];
-    大图血圈景样式.frame = self.frame;
-    大图血圈景样式.lineWidth=1;
-    大图血圈景样式.strokeColor = UIColor.redColor.CGColor;//方框颜色
-    大图血圈景样式.fillColor = UIColor.redColor.CGColor;
-    [self.layer addSublayer:大图血圈景样式];//标记
+    大图血圈样式 = [[CAShapeLayer alloc] init];
+    大图血圈样式.frame = self.frame;
+    大图血圈样式.lineWidth=1;
+    大图血圈样式.strokeColor = UIColor.redColor.CGColor;//方框颜色
+    大图血圈样式.fillColor = UIColor.redColor.CGColor;
+    [self.layer addSublayer:大图血圈样式];//标记
     
     
     
@@ -164,10 +164,9 @@ static UITextField* textField;
         小地图英雄头像视图[i] = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
         小地图英雄头像视图[i].backgroundColor = [UIColor clearColor];
         小地图英雄头像视图[i].layer.masksToBounds = YES;
-        小地图英雄头像视图[i].layer.cornerRadius = R;
         小地图英雄头像视图[i].hidden=YES;
         小地图英雄头像视图[i].layer.borderColor = [UIColor redColor].CGColor;
-        小地图英雄头像视图[i].layer.borderWidth = 1.f;
+        小地图英雄头像视图[i].layer.borderWidth = 0.5;
         [self addSubview:小地图英雄头像视图[i]];
     }
     
@@ -331,6 +330,7 @@ static int YXsum = 0;
                             Vector2 MiniPos = ToMiniMap(小地图, 读取英雄数据[i].Pos);
                             R=小地图.大小/14;
                             小地图英雄头像视图[i].image = GetHeroImage(读取英雄数据[i].英雄ID);
+                            小地图英雄头像视图[i].layer.cornerRadius = R;
                             if (小地图英雄头像视图[i].image==nil ||小地图英雄头像视图[i].image==NULL) {
                                 continue;
                             }
@@ -339,15 +339,15 @@ static int YXsum = 0;
                             //小地血圈圈条
                             if(血条开关)
                             {
-                                float 血量 =M_PI*2*读取英雄数据[i].HP;
+                                float 血量 =读取英雄数据[i].HP;
                                 //小地图
                                 UIBezierPath *Line = [UIBezierPath bezierPathWithArcCenter:CGPointMake(MiniPos.横轴x,MiniPos.大小) radius:半径 startAngle:(0) endAngle:M_PI*2 clockwise:true];
                                 [Path_血背景 appendPath:Line];
                                 
-                                UIBezierPath *Line3 = [UIBezierPath bezierPathWithArcCenter:CGPointMake(MiniPos.横轴x,MiniPos.大小) radius:半径 startAngle:(0) endAngle:血量 clockwise:true];
+                                UIBezierPath *Line3 = [UIBezierPath bezierPathWithArcCenter:CGPointMake(MiniPos.横轴x,MiniPos.大小) radius:半径 startAngle:(0) endAngle:M_PI*2*血量 clockwise:true];
                                 [Path_血圈 appendPath:Line3];
                                 //大地图
-                                [Path_大地图血圈路径 appendPath:[UIBezierPath bezierPathWithRect:CGRectMake(BoxPos.横轴x-20, BoxPos.大小-13, 40, 5)]];
+                                [Path_大地图血圈路径 appendPath:[UIBezierPath bezierPathWithRect:CGRectMake(BoxPos.横轴x-19, BoxPos.大小-14, 38*血量, 5)]];
                                 
                             }
                         }
@@ -455,7 +455,7 @@ static int YXsum = 0;
     小地图方框样式.path = 小地图方框路径.CGPath;
     血背景样式.path = Path_血背景.CGPath;
     血圈景样式.path = Path_血圈.CGPath;
-    大图血圈景样式.path = Path_大地图血圈路径.CGPath;
+    大图血圈样式.path = Path_大地图血圈路径.CGPath;
 }
 
 static void NetGetHeroImage(int HeroID)
