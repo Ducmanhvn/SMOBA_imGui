@@ -3,7 +3,7 @@
 
 struct Vector2
 {
-    float x,y;
+    float 横轴x,大小;
 };
 
 struct Vector3
@@ -33,12 +33,12 @@ struct Matrix
 
 struct SmobaHeroData{
     float HP;
-    int HeroID;
-    int HeroSkillTime;
+    int 英雄ID;
+    int 大招倒计时;
     int HeroHealth;
     int HeroMaxHealth;
     int HeroTalent;
-    int HeroTalentTime;
+    int 仅能倒计时;
     int HeroTeam;
     Vector2 Pos;
     int32_t HeroHP;
@@ -52,11 +52,11 @@ struct SmobaHeroData{
 };
 struct SmobaMonsterData{
     int32_t MonsterID;
-    int32_t MonsterHP;
-    int32_t MonsterMaxHP;
+    int32_t 野怪当前血量;
+    int32_t 野怪最大血量;
     Vector2 MonsterPos;
 };
-extern std::vector<SmobaMonsterData>MonsterData;
+extern std::vector<SmobaMonsterData>野怪数据;
 
 struct SaveImage
 {

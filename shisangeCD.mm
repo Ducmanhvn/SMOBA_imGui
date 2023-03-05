@@ -392,11 +392,12 @@ static int 排序;
 #pragma mark - 添加开关
 static int 操作ID;
 static 执行函数 开启代码[1000],关闭代码[1000];
-+ (void)添加开关:(NSString *)标题 开启:(执行函数)开启 关闭:(执行函数)关闭
++ (void)添加开关:(NSString *)标题 默认状态:(BOOL)默认状态 开启:(执行函数)开启 关闭:(执行函数)关闭
 {
     操作ID=分组排序*100+排序++;
     开关标题[操作ID]=标题;
     switchView[操作ID] = [[UISwitch alloc] init];
+    开关状态[操作ID]=默认状态;
     switchView[操作ID].on=开关状态[操作ID];
     switchView[操作ID].tag=操作ID;
     [switchView[操作ID] addTarget:self action:@selector(开关调用:) forControlEvents:UIControlEventValueChanged];

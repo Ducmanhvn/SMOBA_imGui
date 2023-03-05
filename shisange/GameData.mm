@@ -12,7 +12,7 @@
 #import <dlfcn.h>
 long Imageaddress,Game_Data,Game_Viewport;
 Matrix ViewMatrix;
-std::vector<SmobaMonsterData>MonsterData;
+std::vector<SmobaMonsterData>野怪数据;
 
 extern "C" kern_return_t mach_vm_region_recurse(
                                                 vm_map_t                 map,
@@ -106,13 +106,13 @@ float Read_Float(long src)
 
 bool ToScreen(Vector2 GameCanvas,Vector2 HeroPos,Vector2* Screen)
 {
-    Screen->x=0;Screen->y=0;
+    Screen->横轴x=0;Screen->大小=0;
     float ViewW;
-    ViewW = ViewMatrix._13 * HeroPos.x + ViewMatrix._33 * HeroPos.y + ViewMatrix._43;
+    ViewW = ViewMatrix._13 * HeroPos.横轴x + ViewMatrix._33 * HeroPos.大小 + ViewMatrix._43;
     if (ViewW < 0.01) return false;
     ViewW = 1/ViewW;
-    Screen->x = (1+(ViewMatrix._11 * HeroPos.x + ViewMatrix._31 * HeroPos.y + ViewMatrix._41) * ViewW)*GameCanvas.x/2;
-    Screen->y = (1-(ViewMatrix._12 * HeroPos.x + ViewMatrix._32 * HeroPos.y + ViewMatrix._42) * ViewW)*GameCanvas.y/2;
+    Screen->横轴x = (1+(ViewMatrix._11 * HeroPos.横轴x + ViewMatrix._31 * HeroPos.大小 + ViewMatrix._41) * ViewW)*GameCanvas.横轴x/2;
+    Screen->大小 = (1-(ViewMatrix._12 * HeroPos.横轴x + ViewMatrix._32 * HeroPos.大小 + ViewMatrix._42) * ViewW)*GameCanvas.大小/2;
     return true;
 }
 
@@ -120,10 +120,10 @@ Vector2 ToMiniMap(Vector2 MiniMap,Vector2 HeroPos)
 {
     Vector2 Pos;
     float transformation = ViewMatrix._11>0?1:-1;
-    Pos.x = (50 + HeroPos.x*transformation)/100;
-    Pos.y = (50 - HeroPos.y*transformation)/100;
+    Pos.横轴x = (50 + HeroPos.横轴x*transformation)/100;
+    Pos.大小 = (50 - HeroPos.大小*transformation)/100;
     
-    return {MiniMap.x + Pos.x*MiniMap.y,Pos.y*MiniMap.y};
+    return {MiniMap.横轴x + Pos.横轴x*MiniMap.大小,Pos.大小*MiniMap.大小};
 }
 
 bool RefreshMatrix()
@@ -234,7 +234,7 @@ int GetGetHeroSkillTime(long Target){//大招偏移
 void GetPlayers(std::vector<SmobaHeroData> *Players)
 {
     Players->clear();
-    MonsterData.clear();
+    野怪数据.clear();
     long PDatas = Read_Long(Read_Long(Game_Data)+0x390);
     if (PDatas > Imageaddress)
     {
@@ -249,16 +249,16 @@ void GetPlayers(std::vector<SmobaHeroData> *Players)
                 long P_player = Read_Long(Array+i*0x18);
                 if (P_player > Imageaddress){
                     SmobaHeroData HeroData;
-                    HeroData.HeroID = GetPlayerHero(P_player);
+                    HeroData.英雄ID = GetPlayerHero(P_player);
                     HeroData.HeroTeam = GetPlayerTeam(P_player);
                     HeroData.Dead = GetPlayerDead(P_player);
                     HeroData.HeroHP = GetGameHP(P_player);
                     HeroData.HeroMaxHP = GetGameMaxHP(P_player);
                     HeroData.Pos = GetPlayerPos(P_player);
                     HeroData.HP = GetPlayerHP(P_player);
-                    HeroData.HeroSkillTime = GetGetHeroSkillTime(P_player);
+                    HeroData.大招倒计时 = GetGetHeroSkillTime(P_player);
                     HeroData.HeroTalent = GetPlayerHeroTalent(P_player);
-                    HeroData.HeroTalentTime = GetPlayerHeroTalentTime(P_player);
+                    HeroData.仅能倒计时 = GetPlayerHeroTalentTime(P_player);
                     GetHeroSkill(P_player,&HeroData.Skill1,&HeroData.Skill2,&HeroData.Skill3,&HeroData.Skill4);
                     if (HeroData.HeroTeam != MyTeam)Players->push_back(HeroData);;
                 }
@@ -270,10 +270,10 @@ void GetPlayers(std::vector<SmobaHeroData> *Players)
             SmobaMonsterData Monster;
             long P_Monster = Read_Long(Monster_Data+i*0x18);
             Monster.MonsterID = GetPlayerHero(P_Monster);
-            Monster.MonsterHP = GetGameHP(P_Monster);
-            Monster.MonsterMaxHP = GetGameHP(P_Monster);
+            Monster.野怪当前血量 = GetGameHP(P_Monster);
+            Monster.野怪最大血量 = GetGameMaxHP(P_Monster);
             Monster.MonsterPos = GetPlayerPos(P_Monster);
-            MonsterData.push_back(Monster);
+            野怪数据.push_back(Monster);
         }
         
     }

@@ -45,7 +45,7 @@
         [shisangeCD 添加自定义视图:(a)];
         
         //添加一个开关 包含开启和关闭调用 例子===================================
-        [shisangeCD 添加开关:@"这是一个开关例子" 开启:^{
+        [shisangeCD 添加开关:@"这是一个开关例子" 默认状态:NO 开启:^{
             NSLog(@"测试功能2开启");
         } 关闭:^{
             NSLog(@"测试功能2关闭");
@@ -97,39 +97,40 @@
     }];
     //第二个分组一样
     
-    [shisangeCD 添加分组:@"这是第二分组"  分组说明:@"王者跨进程" 是否展开:YES 功能数:10  子功能:^{
-        [shisangeCD 添加开关:@"透视开关" 开启:^{
+    [shisangeCD 添加分组:@"这是第二分组"  分组说明:@"王者跨进程" 是否展开:YES 功能数:12  子功能:^{
+        [shisangeCD 添加开关:@"透视开关" 默认状态:NO 开启:^{
             透视开关=YES;
         } 关闭:^{
             透视开关=NO;
         }];
-        [shisangeCD 添加开关:@"血条开关" 开启:^{
+        [shisangeCD 添加开关:@"血条开关" 默认状态:NO 开启:^{
             血条开关=YES;
         } 关闭:^{
             血条开关=NO;
         }];
-        [shisangeCD 添加开关:@"射线开关" 开启:^{
+        [shisangeCD 添加开关:@"射线开关" 默认状态:NO 开启:^{
             射线开关=YES;
         } 关闭:^{
             射线开关=NO;
         }];
-        [shisangeCD 添加开关:@"方框开关" 开启:^{
+        [shisangeCD 添加开关:@"方框开关" 默认状态:NO 开启:^{
             方框开关=YES;
         } 关闭:^{
             方框开关=NO;
         }];
-        [shisangeCD 添加开关:@"技能开关" 开启:^{
+        [shisangeCD 添加开关:@"技能开关" 默认状态:NO 开启:^{
             技能开关=YES;
         } 关闭:^{
             技能开关=NO;
         }];
         
-        [shisangeCD 添加开关:@"野怪绘制开关" 开启:^{
+        [shisangeCD 添加开关:@"野怪绘制开关" 默认状态:NO 开启:^{
             野怪绘制开关=YES;
         } 关闭:^{
             野怪绘制开关=NO;
         }];
-        [shisangeCD 添加开关:@"过直播开关" 开启:^{
+        是否过直播=YES;
+        [shisangeCD 添加开关:@"过直播开关" 默认状态:是否过直播 开启:^{
             是否过直播=YES;
             [shisangeCD 过直播调用:是否过直播];
             [[TestSmoba alloc] 绘制过直播:是否过直播];
@@ -143,7 +144,7 @@
         UIView *父级视图=[[UIView alloc] initWithFrame:CGRectMake(0, 0, 300, 40)];//这个尺寸为在单元格中的坐标系
         父级视图.backgroundColor=[UIColor clearColor];//随便设置个背景红色
         
-        UISlider *slider1 = [[UISlider alloc] initWithFrame:CGRectMake(110, 5, 120, 30)];
+        UISlider *slider1 = [[UISlider alloc] initWithFrame:CGRectMake(130, 5, 150, 30)];
         slider1.minimumValue = 0;
         slider1.maximumValue = 80;
         slider1.value = [[NSUserDefaults standardUserDefaults] floatForKey:@"半径"];
@@ -152,7 +153,7 @@
         [slider1 addTarget:self action:@selector(滑条调用:) forControlEvents:UIControlEventValueChanged];// 针对值变化添加响应方法
         [父级视图 addSubview:slider1];
         
-        UILabel*lab1=[[UILabel alloc] initWithFrame:CGRectMake(20, 0, 200, 40)];
+        UILabel*lab1=[[UILabel alloc] initWithFrame:CGRectMake(20, 0, 150, 40)];
         lab1.text=@"血圈大小";
         lab1.textColor=[UIColor systemBlueColor];
         [父级视图 addSubview:lab1];
@@ -164,7 +165,7 @@
         UIView *父级视图2=[[UIView alloc] initWithFrame:CGRectMake(0, 0, 300, 40)];//这个尺寸为在单元格中的坐标系
         父级视图2.backgroundColor=[UIColor clearColor];//随便设置个背景红色
         
-        UISlider *slider2 = [[UISlider alloc] initWithFrame:CGRectMake(110, 5, 120, 30)];
+        UISlider *slider2 = [[UISlider alloc] initWithFrame:CGRectMake(130, 5, 150, 30)];
         slider2.minimumValue = 0;
         slider2.maximumValue = 500;
         slider2.value = [[NSUserDefaults standardUserDefaults] floatForKey:@"mapx"];
@@ -173,7 +174,7 @@
         [slider2 addTarget:self action:@selector(滑条调用:) forControlEvents:UIControlEventValueChanged];// 针对值变化添加响应方法
         [父级视图2 addSubview:slider2];
         
-        UILabel*lab2=[[UILabel alloc] initWithFrame:CGRectMake(20, 0, 200, 40)];
+        UILabel*lab2=[[UILabel alloc] initWithFrame:CGRectMake(20, 0, 150, 40)];
         lab2.text=@"左右矫正";
         lab2.textColor=[UIColor systemBlueColor];
         [父级视图2 addSubview:lab2];
@@ -184,7 +185,7 @@
         UIView *父级视图3=[[UIView alloc] initWithFrame:CGRectMake(0, 0, 300, 40)];//这个尺寸为在单元格中的坐标系
         父级视图3.backgroundColor=[UIColor clearColor];//随便设置个背景红色
         
-        UISlider *slider3 = [[UISlider alloc] initWithFrame:CGRectMake(110, 5, 120, 30)];
+        UISlider *slider3 = [[UISlider alloc] initWithFrame:CGRectMake(130, 5, 150, 30)];
         slider3.minimumValue = 0;
         slider3.maximumValue = 400;
         slider3.value = [[NSUserDefaults standardUserDefaults] floatForKey:@"mapy"];
@@ -193,12 +194,52 @@
         [slider3 addTarget:self action:@selector(滑条调用:) forControlEvents:UIControlEventValueChanged];// 针对值变化添加响应方法
         [父级视图3 addSubview:slider3];
         
-        UILabel*lab3=[[UILabel alloc] initWithFrame:CGRectMake(20, 0, 200, 40)];
+        UILabel*lab3=[[UILabel alloc] initWithFrame:CGRectMake(20, 0, 150, 40)];
         lab3.text=@"大小矫正";
         lab3.textColor=[UIColor systemBlueColor];
         [父级视图3 addSubview:lab3];
         
         [shisangeCD 添加自定义视图:父级视图3];
+        
+        //地图框大小滑条================
+        UIView *父级视图4=[[UIView alloc] initWithFrame:CGRectMake(0, 0, 300, 40)];//这个尺寸为在单元格中的坐标系
+        父级视图4.backgroundColor=[UIColor clearColor];//随便设置个背景红色
+        
+        UISlider *slider4 = [[UISlider alloc] initWithFrame:CGRectMake(130, 5, 150, 30)];
+        slider4.minimumValue = 0;
+        slider4.maximumValue = 1000;
+        slider4.value = [[NSUserDefaults standardUserDefaults] floatForKey:@"技能绘制x调节"];
+        [slider4 setContinuous:YES];
+        slider4.tag=4;
+        [slider4 addTarget:self action:@selector(滑条调用:) forControlEvents:UIControlEventValueChanged];// 针对值变化添加响应方法
+        [父级视图4 addSubview:slider4];
+        
+        UILabel*lab4=[[UILabel alloc] initWithFrame:CGRectMake(20, 0, 150, 40)];
+        lab4.text=@"技能左右调节";
+        lab4.textColor=[UIColor systemBlueColor];
+        [父级视图4 addSubview:lab4];
+        
+        [shisangeCD 添加自定义视图:父级视图4];
+        
+        //地图框大小滑条================
+        UIView *父级视图5=[[UIView alloc] initWithFrame:CGRectMake(0, 0, 300, 40)];//这个尺寸为在单元格中的坐标系
+        父级视图5.backgroundColor=[UIColor clearColor];//随便设置个背景红色
+        
+        UISlider *slider5 = [[UISlider alloc] initWithFrame:CGRectMake(130, 5, 150, 30)];
+        slider5.minimumValue = 0;
+        slider5.maximumValue = 300;
+        slider5.value = [[NSUserDefaults standardUserDefaults] floatForKey:@"技能绘制y调节"];
+        [slider5 setContinuous:YES];
+        slider5.tag=5;
+        [slider5 addTarget:self action:@selector(滑条调用:) forControlEvents:UIControlEventValueChanged];// 针对值变化添加响应方法
+        [父级视图5 addSubview:slider5];
+        
+        UILabel*lab5=[[UILabel alloc] initWithFrame:CGRectMake(20, 0, 150, 40)];
+        lab5.text=@"技能大小调节";
+        lab5.textColor=[UIColor systemBlueColor];
+        [父级视图5 addSubview:lab5];
+        
+        [shisangeCD 添加自定义视图:父级视图5];
         
     }];
     
@@ -232,6 +273,14 @@
     if (Slider.tag==3) {
         mapy=Slider.value;
         [[NSUserDefaults standardUserDefaults] setFloat:mapy forKey:@"mapy"];
+    }
+    if (Slider.tag==4) {
+        技能绘制x调节=Slider.value;
+        [[NSUserDefaults standardUserDefaults] setFloat:技能绘制x调节 forKey:@"技能绘制x调节"];
+    }
+    if (Slider.tag==5) {
+        技能绘制y调节=Slider.value;
+        [[NSUserDefaults standardUserDefaults] setFloat:技能绘制y调节 forKey:@"技能绘制y调节"];
     }
     NSLog(@"当前滑动值=%.1f",Slider.value);
     
