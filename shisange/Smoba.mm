@@ -72,34 +72,13 @@ float mapx,mapy,半径,技能绘制x调节,技能绘制y调节,R;
             mapy =[[NSUserDefaults standardUserDefaults] floatForKey:@"mapy"];
             技能绘制x调节=[[NSUserDefaults standardUserDefaults] floatForKey:@"技能绘制x调节"];
             技能绘制y调节=[[NSUserDefaults standardUserDefaults] floatForKey:@"技能绘制y调节"];
-            [Smoba jtyl];
+            
             IView = [[Smoba alloc] init];
             [IView 定时器];
         });
     });
 }
 
-+ (void)jtyl{
-    AVAudioSession*audioSession = [AVAudioSession sharedInstance];
-    [audioSession setActive:YES error:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(volumeChanged:) name:@"AVSystemController_SystemVolumeDidChangeNotification" object:nil];
-}
-+ (void)volumeChanged:(NSNotification *)notification {
-    float volume = [[[notification userInfo] objectForKey:@"AVSystemController_AudioVolumeNotificationParameter"] floatValue];
-    NSLog(@"Current volume: %f", volume);
-    if (初始音量!=volume) {
-        初始音量=volume;
-//        GameMV=Gameinitialization();
-        
-        NSLog(@"屏幕宽度=%f",屏幕宽度);
-        if (GameMV) {
-            
-            
-        }
-        
-    }
-    
-}
 
 + (UIViewController *)fetchViewControllerFromRootViewController
 {
@@ -475,11 +454,13 @@ static int YXsum = 0;
                         if(读取英雄数据[i].仅能倒计时 == 0){
                             大招图标视图[i].layer.borderColor = [UIColor redColor].CGColor;
                             技能时间[i].text = nil;
+                            
                         }
                         else{
                             大招图标视图[i].layer.borderColor = [UIColor clearColor].CGColor;
                             NSString *stringValue = [NSString stringWithFormat:@"%d", (读取英雄数据[i].仅能倒计时)];
                             技能时间[i].text = stringValue;
+                            
                         }
                         
                         //召唤师大招时间
@@ -494,7 +475,7 @@ static int YXsum = 0;
                         //绘制技能时间
                         [技能时间[i] setFrame:CGRectMake(技能绘制x调节 + (技能绘制y调节+3)*YXsum, 技能绘制y调节+10, 技能绘制y调节, 技能绘制y调节)];
                         //绘制大招时间
-                        [大招时间[i] setFrame:CGRectMake(技能绘制x调节 + (技能绘制y调节+3)*YXsum, 0, 技能绘制y调节, 技能绘制y调节)];
+                        [大招时间[i] setFrame:CGRectMake(技能绘制x调节 + (技能绘制y调节+3)*YXsum, 技能绘制y调节/2, 技能绘制y调节, 技能绘制y调节)];
                         
                         //显示全部控件
                         [技能表英雄头像视图[i] setHidden:NO];
