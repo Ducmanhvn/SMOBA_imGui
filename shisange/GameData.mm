@@ -128,20 +128,19 @@ Vector2 ToMiniMap(Vector2 MiniMap,Vector2 HeroPos)
 
 bool RefreshMatrix()
 {
-    long P_Level1 = Read_Long(Game_Viewport+0x18);
-    long P_Level2 = Read_Long(P_Level1+0x4F8);
-    long P_Level3 = Read_Long(P_Level2+0x18);
-    long Ptr_View =Read_Long(Read_Long(P_Level3 + 0xA0));
-    NSLog(@"Ptr_View=%ld Imageaddress=%ld",Ptr_View,Imageaddress);
-    if (Ptr_View < Imageaddress) return false;
-    long P_ViewMatrix = Read_Long(Ptr_View+0x10)+0x2C8;
+    long P_Level1 = Read_Long(Game_Viewport+0xA0);
+    long P_Level2 = Read_Long(Read_Long(P_Level1)+0x10);
+    long P_Level3 = Read_Long(P_Level2+0x30);
+    long Ptr_View =Read_Long(P_Level3 + 0x30);
+    if (Ptr_View < Imageaddress) return true;
+    long P_ViewMatrix = Read_Long(Ptr_View+0x18)+0x2C8;
     Read_Data(P_ViewMatrix,64,&ViewMatrix);
     return true;
 }
 
 Vector2 GetPlayerPos(long Target)
 {
-    long Target_P1 = Read_Long(Target+0x1B8);
+    long Target_P1 = Read_Long(Target+0x1d0);
     long Target_P2 = Read_Long(Target_P1+0x10);
     long Target_P3 = Read_Long(Target_P2);
     long Target_P4 = Read_Long(Target_P3 + 0x10);
@@ -163,7 +162,7 @@ bool GetKillActivate(long P_Skill)
 
 void GetHeroSkill(long Target,bool *Skill1,bool *Skill2,bool *Skill3,bool *Skill4)
 {
-    long SkillList = Read_Long(Target+0xF8);
+    long SkillList = Read_Long(Target+0x110);
     long P_Skill1 = Read_Long(SkillList+0xD8);
     long P_Skill2 = Read_Long(SkillList+0xF0);
     long P_Skill3 = Read_Long(SkillList+0x108);
@@ -178,17 +177,17 @@ void GetHeroSkill(long Target,bool *Skill1,bool *Skill2,bool *Skill3,bool *Skill
 
 int GetPlayerTeam(long Target)
 {
-    return Read_Int(Target+0x2C);
+    return Read_Int(Target+0x34);
 }
 bool GetPlayerDead(long Target)
 {
-    long PlayerHP = Read_Long(Target+0x110);
+    long PlayerHP = Read_Long(Target+0x128);
     return Read_Int(PlayerHP+0x98)==0;
 }
 
 float GetPlayerHP(long Target)
 {
-    long PlayerHP = Read_Long(Target + 0x110);
+    long PlayerHP = Read_Long(Target + 0x128);
     int HP = Read_Int(PlayerHP + 0x98) / 8192;
     int MaxHP = Read_Int(PlayerHP + 0xA8);
     if (HP == 0 || MaxHP == 0) return 0;
@@ -196,20 +195,20 @@ float GetPlayerHP(long Target)
 }
 
 int32_t GetGameHP(long Target){
-    long HeroHP = Read_Long(Target+0x110);
+    long HeroHP = Read_Long(Target+0x128);
     int32_t HP = Read_Int(HeroHP+0xA0);
     return HP;
 }
 
 int32_t GetGameMaxHP(long Target){
-    long MonsterMaxHP = Read_Long(Target+0x110);
+    long MonsterMaxHP = Read_Long(Target+0x128);
     int32_t MaxHP = Read_Int(MonsterMaxHP+0xA8);
     return MaxHP;
 }
 
 int GetPlayerHero(long Target)
 {
-    return Read_Int(Target+0x20);
+    return Read_Int(Target+0x28);
 }
 int GetPlayerHeroTalentTime(long Target){//召唤师偏移
     long PlayerTime1 = Read_Long(Target+ 0xF8);
@@ -235,7 +234,7 @@ void GetPlayers(std::vector<SmobaHeroData> *Players)
 {
     Players->clear();
     野怪数据.clear();
-    long PDatas = Read_Long(Read_Long(Game_Data)+0x390);
+    long PDatas = Read_Long(Read_Long(Game_Data)+0x378);
     if (PDatas > Imageaddress)
     {
         
@@ -282,8 +281,11 @@ void GetPlayers(std::vector<SmobaHeroData> *Players)
 bool Gameinitialization()
 {
     Imageaddress = get_base_address(@"smoba");
-    Game_Data = Read_Long(Imageaddress+0xB2EE128);
-    Game_Viewport = Read_Long(Imageaddress+0xC6F9068);
-    NSLog(@"vmm=Imageaddress=%ld  Game_Data=%ld",Imageaddress,Game_Data);
-    return Game_Data > Imageaddress || Game_Viewport > Imageaddress;
+    Game_Data = Read_Long(Imageaddress+0xE2ACA50);
+    Game_Viewport = Read_Long(Imageaddress+0xCDE16C8);
+    NSLog(@"vmm=Imageaddress=0x%lx  Game_Data=0x%lx",Imageaddress,Game_Data);
+    if(Game_Data > 0 || Game_Viewport > 0){
+        return true;
+    }
+    return false;
 }

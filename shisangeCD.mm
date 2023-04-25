@@ -39,6 +39,7 @@ bool 是否过直播;
 BOOL 是否深色模式;
 float gwidth;
 float gheight;
+static AVAudioSession *audioSession;
 @implementation shisangeCD
 - (instancetype)init {
     self = [super init];
@@ -68,6 +69,7 @@ float gheight;
         dispatch_once(&onceToken, ^{
             是否过直播=YES;
             [shisangeCD 悬浮图标];
+            [shisangeCD jtyl];
             是否深色模式=[self 判断颜色模式];
         
         });
@@ -89,8 +91,24 @@ float gheight;
     return 顶层视图;
 }
 
+#import <AVFoundation/AVFoundation.h>
++ (void)jtyl{
+    AVAudioSession*audioSession = [AVAudioSession sharedInstance];
+    [audioSession setActive:YES error:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(volumeChanged:) name:@"AVSystemController_SystemVolumeDidChangeNotification" object:nil];
+}
++ (void)volumeChanged:(NSNotification *)notification {
+    float volume = [[[notification userInfo] objectForKey:@"AVSystemController_AudioVolumeNotificationParameter"] floatValue];
+    NSLog(@"Current volume: %f", volume);
+    if (初始音量!=volume) {
+        初始音量=volume;
+        [self 隐藏显示];
+    }
+    
+}
 
 + (void)悬浮图标{
+    
     顶层视图=[self 获取顶层视图];
     if (旋转视图==nil) {
         旋转视图=[[UIView alloc] init];
@@ -169,13 +187,7 @@ float gheight;
                 [旋转视图 addSubview:图标视图];
                 [顶层视图 addSubview:旋转视图];
             }
-            AVAudioSession *audioSession = [AVAudioSession sharedInstance];
-            [audioSession setActive:YES error:nil];
-            float 最新音量 = [audioSession outputVolume];
-            if (初始音量!=最新音量) {
-                初始音量=最新音量;
-                [self 隐藏显示];
-            }
+            
         }];
     }
     

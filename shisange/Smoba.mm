@@ -2,7 +2,7 @@
 #import "shisangeCD.h"
 #define kuandu  [UIScreen mainScreen].bounds.size.width
 #define gaodu [UIScreen mainScreen].bounds.size.height
-
+#import <AVFoundation/AVFoundation.h>
 @interface SkillView : UIView
 @property UIView* 技能1;
 @property UIView* 技能2;
@@ -13,14 +13,16 @@
 @implementation SkillView
 @end
 
-@interface TestSmoba : UIView
-- (void) Start;
+@interface Smoba : UIView
+- (void) 初始化视图;
+@property (nonatomic, strong) dispatch_source_t jctimer;
+@property (nonatomic, strong) dispatch_source_t hztimer;
 @end
 
-TestSmoba* IView;
+Smoba* IView;
 
 
-@implementation TestSmoba
+@implementation Smoba
 CAShapeLayer *小地图野怪血圈视图[100];
 CAShapeLayer *小地图野怪血圈背景视图[100];
 UILabel *野怪血量[100];
@@ -46,88 +48,153 @@ std::vector<SaveImage> NetImage;
 float 屏幕宽度,屏幕高度;
 static bool GameMV;
 static UIWindow* 根视图;
-static NSTimer *进程定时器;
-static NSTimer *绘制定时器;
+static float 初始音量;
 float mapx,mapy,半径,技能绘制x调节,技能绘制y调节,R;
-static UITextField* textField;
-+(void)load
+
+- (instancetype)initWithFrame:(CGRect)frame
 {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(),^{
+    self = [super initWithFrame:frame];
+    if (self) {
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
-            NSLog(@"gamevm=load");
-            IView = [[TestSmoba alloc] init];
+            [self 初始化视图];
+        });
+    }
+    return self;
+}
+
++(void)load
+{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(),^{
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            mapx =[[NSUserDefaults standardUserDefaults] floatForKey:@"mapx"];
+            mapy =[[NSUserDefaults standardUserDefaults] floatForKey:@"mapy"];
+            技能绘制x调节=[[NSUserDefaults standardUserDefaults] floatForKey:@"技能绘制x调节"];
+            技能绘制y调节=[[NSUserDefaults standardUserDefaults] floatForKey:@"技能绘制y调节"];
+            [Smoba jtyl];
+            IView = [[Smoba alloc] init];
             [IView 定时器];
         });
     });
 }
+
++ (void)jtyl{
+    AVAudioSession*audioSession = [AVAudioSession sharedInstance];
+    [audioSession setActive:YES error:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(volumeChanged:) name:@"AVSystemController_SystemVolumeDidChangeNotification" object:nil];
+}
++ (void)volumeChanged:(NSNotification *)notification {
+    float volume = [[[notification userInfo] objectForKey:@"AVSystemController_AudioVolumeNotificationParameter"] floatValue];
+    NSLog(@"Current volume: %f", volume);
+    if (初始音量!=volume) {
+        初始音量=volume;
+//        GameMV=Gameinitialization();
+        
+        NSLog(@"屏幕宽度=%f",屏幕宽度);
+        if (GameMV) {
+            
+            
+        }
+        
+    }
+    
+}
+
++ (UIViewController *)fetchViewControllerFromRootViewController
+{
+    UIViewController *vc = [UIApplication sharedApplication].delegate.window.rootViewController;
+    while (vc) {
+        if ([vc isKindOfClass:[UITabBarController class]]) {
+            vc = [(UITabBarController *)vc selectedViewController];
+        }
+        if ([vc isKindOfClass:[UINavigationController class]]) {
+            vc = [(UINavigationController *)vc visibleViewController];
+        }
+        if (vc.presentedViewController) {
+            vc = vc.presentedViewController;
+        }else{
+            break;
+        }
+    }
+    return vc;
+}
++ (UIWindow *)获取顶层视图{
+    UIWindow*顶层视图=[UIApplication sharedApplication].keyWindow;
+    if (顶层视图.windowLevel !=UIWindowLevelNormal) {
+        NSArray*arr=[UIApplication sharedApplication].windows;
+        for (UIWindow*tmp in arr) {
+            if (tmp.windowLevel == UIWindowLevelNormal) {
+                顶层视图=tmp;
+                break;
+            }
+        }
+    }
+    return 顶层视图;
+}
+
 -(void)定时器
 {
-    //获取当前音量
-    进程定时器 = [NSTimer scheduledTimerWithTimeInterval:1 repeats:YES block:^(NSTimer * _Nonnull timer) {
-        GameMV=Gameinitialization();
-        NSLog(@"gamevm=%d",GameMV);
-        mapy=[[NSUserDefaults standardUserDefaults] floatForKey:@"mapy"];
-        mapx=[[NSUserDefaults standardUserDefaults] floatForKey:@"mapx"];
-        半径=[[NSUserDefaults standardUserDefaults] floatForKey:@"半径"];
-        技能绘制x调节=[[NSUserDefaults standardUserDefaults] floatForKey:@"技能绘制x调节"];
-        技能绘制y调节=[[NSUserDefaults standardUserDefaults] floatForKey:@"技能绘制y调节"];
+    if (!self.jctimer || !dispatch_source_testcancel(self.jctimer)) {
+        // 创建定时器
+        self.jctimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
+        // 设置定时器的触发时间、间隔时间和精度
+        uint64_t interval = 5 * NSEC_PER_SEC; // 定时器间隔时间为 1 秒
+        uint64_t leeway = 0.1 * NSEC_PER_SEC; // 定时器精度为 0.1 秒
+        dispatch_source_set_timer(self.jctimer, DISPATCH_TIME_NOW, interval, leeway);
+        // 设置定时器的任务
+        dispatch_source_set_event_handler(self.jctimer, ^{
+            // 定时器触发时执行的代码块
+            GameMV=Gameinitialization();
+            if (GameMV){
+                屏幕宽度 = [UIScreen mainScreen].bounds.size.width;
+                屏幕高度 = [UIScreen mainScreen].bounds.size.height;
+                IView.userInteractionEnabled=NO;
+                IView.transform = CGAffineTransformMakeRotation(M_PI*0.5);
+                IView.frame=CGRectMake(0, 0, 屏幕高度, 屏幕宽度);
+                根视图=[Smoba 获取顶层视图];
+                [根视图 addSubview:IView];
+                static dispatch_once_t onceToken;
+                dispatch_once(&onceToken, ^{
+                    [IView 初始化视图];
+                });
+                
+                [self 绘制定时器];
+                
+            }else{
+                NSLog(@"判断定时器是否存在");
+                // 判断定时器是否存在
+                if (self.hztimer==nil) {
+                    // 定时器已经被取消
+                    NSLog(@"定时器已经被取消");
+                } else {
+                    // 定时器还存在
+                    NSLog(@"定时器还存在");
+                    dispatch_source_cancel(self.hztimer);
+                    self.hztimer = nil;
+                }
+                
+            }
+        });
         
-        //判断王者进程存在才启动定时器 否则注销定时器 绘制 影响电量
-        if (GameMV) {
-            根视图=[shisangeCD 获取顶层视图];
-            屏幕宽度 = [UIScreen mainScreen].bounds.size.width;
-            屏幕高度 = [UIScreen mainScreen].bounds.size.height;
-            
-            IView.transform=CGAffineTransformMakeRotation(M_PI*0.5);
-            IView.frame=CGRectMake(0, 0, 屏幕高度, 屏幕宽度);
-            if(textField==nil){
-                textField = [[UITextField alloc] init];
-            }
-            textField = [[UITextField alloc] init];
-            textField.secureTextEntry = 是否过直播;
-            textField.frame = IView.bounds;
-            textField.subviews.firstObject.userInteractionEnabled = YES;
-            [textField.subviews.firstObject addSubview:IView];
-            textField.userInteractionEnabled = NO;
-            [根视图 addSubview:textField];
-            static dispatch_once_t onceToken;
-            dispatch_once(&onceToken, ^{
-                [IView Start];
-            });
-            //判断定时器是否为空
-            if (绘制定时器==nil) {
-                绘制定时器 = [NSTimer scheduledTimerWithTimeInterval:0.05 repeats:YES block:^(NSTimer * _Nonnull timer) {
-                    [self Drawing];
-                }];
-                [[NSRunLoop currentRunLoop] addTimer:绘制定时器 forMode:NSRunLoopCommonModes];
-            }
-            
-        }else{
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                //释放定时器
-                [绘制定时器 invalidate];
-                绘制定时器=nil;
-            });
-        }
-    }];
-    [[NSRunLoop currentRunLoop] addTimer:进程定时器 forMode:NSRunLoopCommonModes];
-    
+        // 启动定时器
+        dispatch_resume(self.jctimer);
+    }
     
 }
+
 - (void)绘制过直播:(BOOL)开关
 {
-    textField=nil;
-    [textField removeFromSuperview];
+
 }
-- (void) Start
+- (void) 初始化视图
 {
     
     self.backgroundColor = [UIColor clearColor];
     [self setUserInteractionEnabled:NO];
     
-    GameCanvas.横轴x = IView.frame.size.width;
-    GameCanvas.大小 = IView.frame.size.height;
+    GameCanvas.横轴x = 屏幕宽度;
+    GameCanvas.大小 = 屏幕高度;
     
     
     小地图方框样式 = [[CAShapeLayer alloc] init];
@@ -277,13 +344,31 @@ static UITextField* textField;
     
 }
 //技能倒计时调节
-
+- (void) 绘制定时器{
+    if (!self.hztimer || !dispatch_source_testcancel(self.hztimer)) {
+        // 创建定时器
+        self.hztimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
+        
+        // 设置定时器的触发时间、间隔时间和精度
+        uint64_t interval = 0.05 * NSEC_PER_SEC; // 定时器间隔时间为 1 秒
+        uint64_t leeway = 0 * NSEC_PER_SEC; // 定时器精度为 0.1 秒
+        dispatch_source_set_timer(self.hztimer, DISPATCH_TIME_NOW, interval, leeway);
+        
+        // 设置定时器的任务
+        dispatch_source_set_event_handler(self.hztimer, ^{
+            // 定时器触发时执行的代码块
+            
+            [self Drawing];
+        });
+        // 启动定时器
+        dispatch_resume(self.hztimer);
+    }
+}
 
 bool 透视开关,血条开关,射线开关,方框开关,技能开关,野怪绘制开关;
 static int YXsum = 0;
 - (void) Drawing
 {
-    
     小地图.横轴x = mapx;
     小地图.大小 = mapy;
     
@@ -322,8 +407,6 @@ static int YXsum = 0;
                     Vector2 BoxPos;
                     if (!读取英雄数据[i].Dead)
                     {
-                        
-                        
                         if (ToScreen(GameCanvas,读取英雄数据[i].Pos,&BoxPos))
                         {
                             //小地图头像
@@ -353,7 +436,7 @@ static int YXsum = 0;
                         }
                         if (射线开关) {
                             UIBezierPath *bezierPath = [UIBezierPath bezierPath];
-                            [bezierPath moveToPoint:CGPointMake(kuandu/2, gaodu/2)];
+                            [bezierPath moveToPoint:CGPointMake(屏幕宽度/2, 屏幕高度/2)];
                             [bezierPath addLineToPoint:CGPointMake(BoxPos.横轴x, BoxPos.大小-20)];
                             
                             [小地图方框路径 appendPath:bezierPath];
@@ -421,33 +504,34 @@ static int YXsum = 0;
                         
                         
                     }
-                    //==================大地图野怪====================
-                    Vector2 MonsterScreen;
-                    if (野怪绘制开关) {
-                        for (int i= 0; i < 野怪数据.size(); i++) {
-                            if (野怪数据[i].野怪当前血量 > 0) {
-                                if (ToScreen(GameCanvas,野怪数据[i].MonsterPos,&MonsterScreen)){
-                                    Vector2 MiniMonsterPos = ToMiniMap(小地图, 野怪数据[i].MonsterPos);
-                                    //野怪背景
-                                    UIBezierPath *MonsterPath2 = [UIBezierPath bezierPath];
-                                    [MonsterPath2 addArcWithCenter:CGPointMake(MiniMonsterPos.横轴x,MiniMonsterPos.大小) radius:4 startAngle:0 endAngle:M_PI*2 clockwise:true];
-                                    小地图野怪血圈背景视图[i].path = MonsterPath2.CGPath;
-                                    [小地图野怪血圈背景视图[i] setHidden:NO];
-                                    
-                                    //野怪血圈
-                                    UIBezierPath *MonsterPath = [UIBezierPath bezierPath];
-                                    [MonsterPath moveToPoint:CGPointMake(MiniMonsterPos.横轴x,MiniMonsterPos.大小)];
-                                    [MonsterPath addArcWithCenter:CGPointMake(MiniMonsterPos.横轴x,MiniMonsterPos.大小) radius:3 startAngle:0 endAngle:M_PI*2*野怪数据[i].野怪当前血量/野怪数据[i].野怪最大血量 clockwise:true];
-                                    [MonsterPath addLineToPoint:CGPointMake(MiniMonsterPos.横轴x,MiniMonsterPos.大小)];
-                                    小地图野怪血圈视图[i].path = MonsterPath.CGPath;
-                                    [小地图野怪血圈视图[i] setHidden:NO];
-                                    
-                                    
-                                }
+                    
+                }
+                //==================大地图野怪====================
+                Vector2 MonsterScreen;
+                if (野怪绘制开关) {
+                    for (int i= 0; i < 野怪数据.size(); i++) {
+                        if (野怪数据[i].野怪当前血量 > 0) {
+                            if (ToScreen(GameCanvas,野怪数据[i].MonsterPos,&MonsterScreen)){
+                                Vector2 MiniMonsterPos = ToMiniMap(小地图, 野怪数据[i].MonsterPos);
+                                //野怪背景
+                                UIBezierPath *MonsterPath2 = [UIBezierPath bezierPath];
+                                [MonsterPath2 addArcWithCenter:CGPointMake(MiniMonsterPos.横轴x,MiniMonsterPos.大小) radius:4 startAngle:0 endAngle:M_PI*2 clockwise:true];
+                                小地图野怪血圈背景视图[i].path = MonsterPath2.CGPath;
+                                [小地图野怪血圈背景视图[i] setHidden:NO];
+                                
+                                //野怪血圈
+                                UIBezierPath *MonsterPath = [UIBezierPath bezierPath];
+                                [MonsterPath moveToPoint:CGPointMake(MiniMonsterPos.横轴x,MiniMonsterPos.大小)];
+                                [MonsterPath addArcWithCenter:CGPointMake(MiniMonsterPos.横轴x,MiniMonsterPos.大小) radius:3 startAngle:0 endAngle:M_PI*2*野怪数据[i].野怪当前血量/野怪数据[i].野怪最大血量 clockwise:true];
+                                [MonsterPath addLineToPoint:CGPointMake(MiniMonsterPos.横轴x,MiniMonsterPos.大小)];
+                                小地图野怪血圈视图[i].path = MonsterPath.CGPath;
+                                [小地图野怪血圈视图[i] setHidden:NO];
+                                
+                                
                             }
                         }
-                        
                     }
+                    
                 }
             }
         }
