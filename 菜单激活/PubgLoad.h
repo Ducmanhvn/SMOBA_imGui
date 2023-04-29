@@ -1,15 +1,15 @@
 //
-//  NSObject+main.h
-//  3456
+//  PubgLoad.h
+//  pubg
 //
-//  Created by  十三哥 on 2023/2/21.
+//  Created by 李良林 on 2021/2/14.
 //
 
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSObject (main)
+@interface PubgLoad : NSObject
 
 @end
 

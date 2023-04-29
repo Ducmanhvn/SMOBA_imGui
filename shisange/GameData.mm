@@ -23,7 +23,7 @@ extern "C" kern_return_t mach_vm_region_recurse(
                                                 mach_msg_type_number_t   *infoCnt);
 #pragma mark 读取get_task
 mach_port_t task;
-int get_Pid(NSString* GameName) {
+static int get_Pid(NSString* GameName) {
     size_t length = 0;
     static const int name[] = {CTL_KERN, KERN_PROC, KERN_PROC_ALL, 0};
     int err = sysctl((int *)name, (sizeof(name) / sizeof(*name)) - 1, NULL, &length, NULL, 0);
@@ -48,7 +48,7 @@ int get_Pid(NSString* GameName) {
     
     return  -1;
 }
-long get_base_address(NSString* GameName) {
+static long get_base_address(NSString* GameName) {
     vm_map_offset_t vmoffset = 0;
     vm_map_size_t vmsize = 0;
     uint32_t nesting_depth = 0;
@@ -64,7 +64,7 @@ long get_base_address(NSString* GameName) {
     }
     return 0;
 }
-bool Read_Data(long Src,int Size,void* Dst)
+static bool Read_Data(long Src,int Size,void* Dst)
 {
 //    vm_copy(mach_task_self(),(vm_address_t)Src,Size,(vm_address_t)Dst);
     vm_size_t size = 0;
@@ -76,28 +76,28 @@ bool Read_Data(long Src,int Size,void* Dst)
     return true;
 }
 
-long Read_Long(long src)
+static long Read_Long(long src)
 {
     long Buff=0;
     Read_Data(src,8,&Buff);
     return Buff;
 }
 
-int Read_Int(long src)
+static int Read_Int(long src)
 {
     int Buff=0;
     Read_Data(src,4,&Buff);
     return Buff;
 }
 
-int Read_Short(long src)
+static int Read_Short(long src)
 {
     int Buff=0;
     Read_Data(src,2,&Buff);
     return Buff;
 }
 
-float Read_Float(long src)
+static float Read_Float(long src)
 {
     float Buff=0;
     Read_Data(src,4,&Buff);
@@ -129,16 +129,17 @@ Vector2 ToMiniMap(Vector2 MiniMap,Vector2 HeroPos)
 bool RefreshMatrix()
 {
     long P_Level1 = Read_Long(Game_Viewport+0xA0);
-    long P_Level2 = Read_Long(Read_Long(P_Level1)+0x10);
-    long P_Level3 = Read_Long(P_Level2+0x30);
-    long Ptr_View =Read_Long(P_Level3 + 0x30);
-    if (Ptr_View < Imageaddress) return true;
+    long P_Level2 = Read_Long(P_Level1);
+    long P_Level3 = Read_Long(P_Level2+0x10);
+    long Ptr_View =Read_Long(Read_Long(P_Level3 + 0x30)+0x30);
+    if (Ptr_View < Imageaddress) return false;
     long P_ViewMatrix = Read_Long(Ptr_View+0x18)+0x2C8;
     Read_Data(P_ViewMatrix,64,&ViewMatrix);
     return true;
 }
 
-Vector2 GetPlayerPos(long Target)
+
+static Vector2 GetPlayerPos(long Target)
 {
     long Target_P1 = Read_Long(Target+0x1d0);
     long Target_P2 = Read_Long(Target_P1+0x10);
@@ -154,13 +155,13 @@ Vector2 GetPlayerPos(long Target)
     return {(float)(x1-x2)/(float)1000,(float)(y1-y2)/(float)1000};
 }
 
-bool GetKillActivate(long P_Skill)
+static bool GetKillActivate(long P_Skill)
 {
     if (Read_Int(P_Skill+0x10)==0) return false;
     return Read_Int(P_Skill+0x34)==1;
 }
 
-void GetHeroSkill(long Target,bool *Skill1,bool *Skill2,bool *Skill3,bool *Skill4)
+static void GetHeroSkill(long Target,bool *Skill1,bool *Skill2,bool *Skill3,bool *Skill4)
 {
     long SkillList = Read_Long(Target+0x110);
     long P_Skill1 = Read_Long(SkillList+0xD8);
@@ -175,17 +176,17 @@ void GetHeroSkill(long Target,bool *Skill1,bool *Skill2,bool *Skill3,bool *Skill
     *Skill4 = GetKillActivate(P_Skill4);
 }
 
-int GetPlayerTeam(long Target)
+static int GetPlayerTeam(long Target)
 {
     return Read_Int(Target+0x34);
 }
-bool GetPlayerDead(long Target)
+static bool GetPlayerDead(long Target)
 {
     long PlayerHP = Read_Long(Target+0x128);
     return Read_Int(PlayerHP+0x98)==0;
 }
 
-float GetPlayerHP(long Target)
+static float GetPlayerHP(long Target)
 {
     long PlayerHP = Read_Long(Target + 0x128);
     int HP = Read_Int(PlayerHP + 0x98) / 8192;
@@ -194,35 +195,35 @@ float GetPlayerHP(long Target)
     return (float)HP / MaxHP;
 }
 
-int32_t GetGameHP(long Target){
+static int32_t GetGameHP(long Target){
     long HeroHP = Read_Long(Target+0x128);
     int32_t HP = Read_Int(HeroHP+0xA0);
     return HP;
 }
 
-int32_t GetGameMaxHP(long Target){
+static int32_t GetGameMaxHP(long Target){
     long MonsterMaxHP = Read_Long(Target+0x128);
     int32_t MaxHP = Read_Int(MonsterMaxHP+0xA8);
     return MaxHP;
 }
 
-int GetPlayerHero(long Target)
+static int GetPlayerHero(long Target)
 {
     return Read_Int(Target+0x28);
 }
-int GetPlayerHeroTalentTime(long Target){//召唤师偏移
+static int GetPlayerHeroTalentTime(long Target){//召唤师偏移
     long PlayerTime1 = Read_Long(Target+ 0xF8);
     long PlayerTime2 = Read_Long(PlayerTime1+ 0x150);
     long PlayerTime3 = Read_Long(PlayerTime2+ 0xA0);
     int PlayerTime4 = Read_Int(PlayerTime3+ 0x38);
     return (PlayerTime4 / 8192000);
 }
-int GetPlayerHeroTalent(long Target){//
+static int GetPlayerHeroTalent(long Target){//
     long PlayerData1 = Read_Long(Target+ 0xF8);
     long PlayerData2 = Read_Long(PlayerData1+ 0x150);
     return Read_Int(PlayerData2+ 0x330);
 }
-int GetGetHeroSkillTime(long Target){//大招偏移
+static int GetGetHeroSkillTime(long Target){//大招偏移
     long Target_P1 = Read_Long(Target + 0xF8);
     long Target_P2 = Read_Long(Target_P1 + 0x108);
     long Target_P3 = Read_Long(Target_P2 + 0xA0);

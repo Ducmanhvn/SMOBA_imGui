@@ -1,8 +1,8 @@
 #import "Class.h"
-#import "shisangeCD.h"
 #define kuandu  [UIScreen mainScreen].bounds.size.width
 #define gaodu [UIScreen mainScreen].bounds.size.height
 #import <AVFoundation/AVFoundation.h>
+#import "Smoba.h"
 @interface SkillView : UIView
 @property UIView* 技能1;
 @property UIView* 技能2;
@@ -13,16 +13,11 @@
 @implementation SkillView
 @end
 
-@interface Smoba : UIView
-- (void) 初始化视图;
-@property (nonatomic, strong) dispatch_source_t jctimer;
-@property (nonatomic, strong) dispatch_source_t hztimer;
-@end
-
-Smoba* IView;
-
 
 @implementation Smoba
+dispatch_source_t jctimer;
+dispatch_source_t hztimer;
+Smoba* IView;
 CAShapeLayer *小地图野怪血圈视图[100];
 CAShapeLayer *小地图野怪血圈背景视图[100];
 UILabel *野怪血量[100];
@@ -46,7 +41,7 @@ Vector2 GameCanvas;
 Vector2 小地图;
 std::vector<SaveImage> NetImage;
 float 屏幕宽度,屏幕高度;
-static bool GameMV;
+bool GameMV,过直播开关;
 static UIWindow* 根视图;
 static float 初始音量;
 float mapx,mapy,半径,技能绘制x调节,技能绘制y调节,R;
@@ -78,26 +73,17 @@ float mapx,mapy,半径,技能绘制x调节,技能绘制y调节,R;
         });
     });
 }
+//过直播视图
+static UITextField* bgTextField;
 
-
-+ (UIViewController *)fetchViewControllerFromRootViewController
-{
-    UIViewController *vc = [UIApplication sharedApplication].delegate.window.rootViewController;
-    while (vc) {
-        if ([vc isKindOfClass:[UITabBarController class]]) {
-            vc = [(UITabBarController *)vc selectedViewController];
-        }
-        if ([vc isKindOfClass:[UINavigationController class]]) {
-            vc = [(UINavigationController *)vc visibleViewController];
-        }
-        if (vc.presentedViewController) {
-            vc = vc.presentedViewController;
-        }else{
-            break;
-        }
-    }
-    return vc;
++(UIView *)getSecureView{
+    bgTextField = [[UITextField alloc] init];
+    [bgTextField setSecureTextEntry:过直播开关];
+    UIView *bgView = bgTextField.subviews.firstObject;
+    
+    return bgView;
 }
+
 + (UIWindow *)获取顶层视图{
     UIWindow*顶层视图=[UIApplication sharedApplication].keyWindow;
     if (顶层视图.windowLevel !=UIWindowLevelNormal) {
@@ -114,15 +100,15 @@ float mapx,mapy,半径,技能绘制x调节,技能绘制y调节,R;
 
 -(void)定时器
 {
-    if (!self.jctimer || !dispatch_source_testcancel(self.jctimer)) {
+    if (!jctimer || !dispatch_source_testcancel(jctimer)) {
         // 创建定时器
-        self.jctimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
+        jctimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
         // 设置定时器的触发时间、间隔时间和精度
         uint64_t interval = 5 * NSEC_PER_SEC; // 定时器间隔时间为 1 秒
         uint64_t leeway = 0.1 * NSEC_PER_SEC; // 定时器精度为 0.1 秒
-        dispatch_source_set_timer(self.jctimer, DISPATCH_TIME_NOW, interval, leeway);
+        dispatch_source_set_timer(jctimer, DISPATCH_TIME_NOW, interval, leeway);
         // 设置定时器的任务
-        dispatch_source_set_event_handler(self.jctimer, ^{
+        dispatch_source_set_event_handler(jctimer, ^{
             // 定时器触发时执行的代码块
             GameMV=Gameinitialization();
             if (GameMV){
@@ -131,40 +117,45 @@ float mapx,mapy,半径,技能绘制x调节,技能绘制y调节,R;
                 IView.userInteractionEnabled=NO;
                 IView.transform = CGAffineTransformMakeRotation(M_PI*0.5);
                 IView.frame=CGRectMake(0, 0, 屏幕高度, 屏幕宽度);
-                根视图=[Smoba 获取顶层视图];
-                [根视图 addSubview:IView];
+                UIView*gzb=[Smoba getSecureView];
+                gzb.userInteractionEnabled=NO;
                 static dispatch_once_t onceToken;
                 dispatch_once(&onceToken, ^{
+                    
+                    gzb.frame=IView.bounds;
                     [IView 初始化视图];
                 });
-                
+                根视图=[Smoba 获取顶层视图];
+                [gzb addSubview:IView];
+                [根视图 addSubview:gzb];
                 [self 绘制定时器];
                 
             }else{
                 NSLog(@"判断定时器是否存在");
                 // 判断定时器是否存在
-                if (self.hztimer==nil) {
+                if (hztimer==nil) {
                     // 定时器已经被取消
                     NSLog(@"定时器已经被取消");
                 } else {
                     // 定时器还存在
                     NSLog(@"定时器还存在");
-                    dispatch_source_cancel(self.hztimer);
-                    self.hztimer = nil;
+                    dispatch_source_cancel(hztimer);
+                    hztimer = nil;
                 }
                 
             }
         });
         
         // 启动定时器
-        dispatch_resume(self.jctimer);
+        dispatch_resume(jctimer);
     }
     
 }
 
 - (void)绘制过直播:(BOOL)开关
 {
-
+    过直播开关=开关;
+    [bgTextField setSecureTextEntry:过直播开关];
 }
 - (void) 初始化视图
 {
@@ -175,13 +166,13 @@ float mapx,mapy,半径,技能绘制x调节,技能绘制y调节,R;
     GameCanvas.横轴x = 屏幕宽度;
     GameCanvas.大小 = 屏幕高度;
     
-    
+    //小地图方框样式
     小地图方框样式 = [[CAShapeLayer alloc] init];
     小地图方框样式.frame = self.frame;
     小地图方框样式.strokeColor = UIColor.greenColor.CGColor;//方框颜色
     小地图方框样式.fillColor = UIColor.clearColor.CGColor;
     [self.layer addSublayer:小地图方框样式];//标记
-    
+    //血背景样式
     血背景样式 = [[CAShapeLayer alloc] init];
     血背景样式.frame = self.frame;
     血背景样式.lineWidth=3;
@@ -189,14 +180,14 @@ float mapx,mapy,半径,技能绘制x调节,技能绘制y调节,R;
     血背景样式.fillColor = UIColor.clearColor.CGColor;
     [self.layer addSublayer:血背景样式];//标记
     
-    
+    //血圈景样式
     血圈景样式 = [[CAShapeLayer alloc] init];
     血圈景样式.frame = self.frame;
     血圈景样式.lineWidth=3;
     血圈景样式.strokeColor = UIColor.redColor.CGColor;//方框颜色
     血圈景样式.fillColor = UIColor.clearColor.CGColor;
     [self.layer addSublayer:血圈景样式];//标记
-    
+    //大图血圈样式
     大图血圈样式 = [[CAShapeLayer alloc] init];
     大图血圈样式.frame = self.frame;
     大图血圈样式.lineWidth=1;
@@ -205,7 +196,7 @@ float mapx,mapy,半径,技能绘制x调节,技能绘制y调节,R;
     [self.layer addSublayer:大图血圈样式];//标记
     
     
-    
+    //小地图英雄头像视图
     for (int i=0; i<10; i++) {
         小地图英雄头像视图[i] = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
         小地图英雄头像视图[i].backgroundColor = [UIColor clearColor];
@@ -215,7 +206,7 @@ float mapx,mapy,半径,技能绘制x调节,技能绘制y调节,R;
         小地图英雄头像视图[i].layer.borderWidth = 0.5;
         [self addSubview:小地图英雄头像视图[i]];
     }
-    
+    //技能表英雄头像视图
     for (int i=0; i<10; i++) {
         技能表英雄头像视图[i] = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
         技能表英雄头像视图[i].backgroundColor = [UIColor clearColor];
@@ -225,7 +216,7 @@ float mapx,mapy,半径,技能绘制x调节,技能绘制y调节,R;
         技能表英雄头像视图[i].layer.borderWidth = 0.f;
         [self addSubview:技能表英雄头像视图[i]];
     }
-    
+    //大招图标视图
     for (int i=0; i<10; i++) {
         大招图标视图[i] = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
         大招图标视图[i].backgroundColor = [UIColor clearColor];
@@ -235,7 +226,7 @@ float mapx,mapy,半径,技能绘制x调节,技能绘制y调节,R;
         大招图标视图[i].layer.borderWidth = 0.f;
         [self addSubview:大招图标视图[i]];
     }
-    
+    //技能时间
     for (int i=0; i<10; i++) {
         技能时间[i] = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
         技能时间[i].text = nil;
@@ -246,7 +237,7 @@ float mapx,mapy,半径,技能绘制x调节,技能绘制y调节,R;
         技能时间[i].textColor = [UIColor whiteColor];
         [self addSubview:技能时间[i]];
     }
-    
+    //大招时间
     for (int i=0; i<10; i++) {
         大招时间[i] = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
         大招时间[i].text = nil;
@@ -259,7 +250,7 @@ float mapx,mapy,半径,技能绘制x调节,技能绘制y调节,R;
     }
     
     
-    
+    //方框下技能小点视图
     for (int i=0; i<10; i++) {
         技能小点视图[i] = [[SkillView alloc] initWithFrame:CGRectMake(0, 0, 80, 16)];
         技能小点视图[i].技能1 = [[UIView alloc] initWithFrame:CGRectMake(2, 0, 16, 16)];
@@ -303,6 +294,7 @@ float mapx,mapy,半径,技能绘制x调节,技能绘制y调节,R;
         
     }
     
+    //小地图野怪血圈
     for (int i=0; i<30; i++) {
         小地图野怪血圈背景视图[i] = [CAShapeLayer layer];
         小地图野怪血圈背景视图[i].fillColor = [UIColor blackColor].CGColor;
@@ -324,33 +316,26 @@ float mapx,mapy,半径,技能绘制x调节,技能绘制y调节,R;
 }
 //技能倒计时调节
 - (void) 绘制定时器{
-    if (!self.hztimer || !dispatch_source_testcancel(self.hztimer)) {
+    if (!hztimer || !dispatch_source_testcancel(hztimer)) {
         // 创建定时器
-        self.hztimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
+        hztimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
         
         // 设置定时器的触发时间、间隔时间和精度
         uint64_t interval = 0.05 * NSEC_PER_SEC; // 定时器间隔时间为 1 秒
         uint64_t leeway = 0 * NSEC_PER_SEC; // 定时器精度为 0.1 秒
-        dispatch_source_set_timer(self.hztimer, DISPATCH_TIME_NOW, interval, leeway);
+        dispatch_source_set_timer(hztimer, DISPATCH_TIME_NOW, interval, leeway);
         
         // 设置定时器的任务
-        dispatch_source_set_event_handler(self.hztimer, ^{
+        dispatch_source_set_event_handler(hztimer, ^{
             // 定时器触发时执行的代码块
             
             [self Drawing];
         });
         // 启动定时器
-        dispatch_resume(self.hztimer);
+        dispatch_resume(hztimer);
     }
 }
-
-bool 透视开关,血条开关,射线开关,方框开关,技能开关,野怪绘制开关;
-static int YXsum = 0;
-- (void) Drawing
-{
-    小地图.横轴x = mapx;
-    小地图.大小 = mapy;
-    
+- (void)hide{
     for (int i=0; i<10; i++) {
         [小地图英雄头像视图[i] setHidden:YES];
         [技能小点视图[i] setHidden:YES];
@@ -366,6 +351,14 @@ static int YXsum = 0;
         [小地图野怪血圈背景视图[i] setHidden:YES];
         
     }
+}
+bool 透视开关,血条开关,射线开关,方框开关,技能开关,野怪绘制开关;
+static int YXsum = 0;
+- (void) Drawing
+{
+    [self hide];
+    小地图.横轴x = mapx;
+    小地图.大小 = mapy;
     
     小地图方框路径 = [[UIBezierPath alloc] init];
     Path_血圈 = [[UIBezierPath alloc] init];
@@ -437,54 +430,55 @@ static int YXsum = 0;
                             
                             
                         }
-                        
-                        
-                    }
-                    if (技能开关) {
-                        YXsum++;
-                        //绘制人物头像
-                        技能表英雄头像视图[i].image = GetHeroImage(读取英雄数据[i].英雄ID);
-                        [技能表英雄头像视图[i] setFrame:CGRectMake(技能绘制x调节 + (技能绘制y调节+3)*YXsum, 0, 技能绘制y调节, 技能绘制y调节)];
-                        
-                        //绘制召唤师技能
-                        大招图标视图[i].image = GetHeroImage(读取英雄数据[i].HeroTalent);
-                        [大招图标视图[i] setFrame:CGRectMake(技能绘制x调节 + (技能绘制y调节+3)*YXsum, 技能绘制y调节+10, 技能绘制y调节, 技能绘制y调节)];
-                        
-                        //召唤师技能时间显示
-                        if(读取英雄数据[i].仅能倒计时 == 0){
-                            大招图标视图[i].layer.borderColor = [UIColor redColor].CGColor;
-                            技能时间[i].text = nil;
+                        //顶部技能图
+                        if (技能开关) {
+                            YXsum++;
+                            //绘制人物头像
+                            技能表英雄头像视图[i].image = GetHeroImage(读取英雄数据[i].英雄ID);
+                            [技能表英雄头像视图[i] setFrame:CGRectMake(技能绘制x调节 + (技能绘制y调节+3)*YXsum, 0, 技能绘制y调节, 技能绘制y调节)];
+                            
+                            //大招图标视图
+                            大招图标视图[i].image = GetHeroImage(读取英雄数据[i].HeroTalent);
+                            [大招图标视图[i] setFrame:CGRectMake(技能绘制x调节 + (技能绘制y调节+3)*YXsum, 技能绘制y调节+10, 技能绘制y调节, 技能绘制y调节)];
+                            
+                            //大招技能时间显示
+                            if(读取英雄数据[i].仅能倒计时 == 0){
+                                大招图标视图[i].layer.borderColor = [UIColor redColor].CGColor;
+                                技能时间[i].text = nil;
+                                
+                            }
+                            else{
+                                大招图标视图[i].layer.borderColor = [UIColor clearColor].CGColor;
+                                NSString *stringValue = [NSString stringWithFormat:@"%d", (读取英雄数据[i].仅能倒计时)];
+                                技能时间[i].text = stringValue;
+                                
+                            }
+                            
+                            //召唤师大招时间
+                            if(读取英雄数据[i].大招倒计时 == 0){
+                                大招时间[i].text = nil;
+                            }
+                            else{
+                                NSString *stringValue = [NSString stringWithFormat:@"%d", (读取英雄数据[i].大招倒计时)];
+                                大招时间[i].text = stringValue;
+                            }
+                            
+                            //绘制技能时间
+                            [技能时间[i] setFrame:CGRectMake(技能绘制x调节 + (技能绘制y调节+3)*YXsum, 技能绘制y调节+10, 技能绘制y调节, 技能绘制y调节)];
+                            //绘制大招时间
+                            [大招时间[i] setFrame:CGRectMake(技能绘制x调节 + (技能绘制y调节+3)*YXsum, 技能绘制y调节+10, 技能绘制y调节, 技能绘制y调节)];
+                            
+                            //显示全部控件
+                            [技能表英雄头像视图[i] setHidden:NO];
+                            [技能时间[i] setHidden:NO];
+                            [大招时间[i] setHidden:NO];
+                            [大招图标视图[i] setHidden:NO];
+                            
                             
                         }
-                        else{
-                            大招图标视图[i].layer.borderColor = [UIColor clearColor].CGColor;
-                            NSString *stringValue = [NSString stringWithFormat:@"%d", (读取英雄数据[i].仅能倒计时)];
-                            技能时间[i].text = stringValue;
-                            
-                        }
-                        
-                        //召唤师大招时间
-                        if(读取英雄数据[i].大招倒计时 == 0){
-                            大招时间[i].text = nil;
-                        }
-                        else{
-                            NSString *stringValue = [NSString stringWithFormat:@"%d", (读取英雄数据[i].大招倒计时)];
-                            大招时间[i].text = stringValue;
-                        }
-                        
-                        //绘制技能时间
-                        [技能时间[i] setFrame:CGRectMake(技能绘制x调节 + (技能绘制y调节+3)*YXsum, 技能绘制y调节+10, 技能绘制y调节, 技能绘制y调节)];
-                        //绘制大招时间
-                        [大招时间[i] setFrame:CGRectMake(技能绘制x调节 + (技能绘制y调节+3)*YXsum, 技能绘制y调节/2, 技能绘制y调节, 技能绘制y调节)];
-                        
-                        //显示全部控件
-                        [技能表英雄头像视图[i] setHidden:NO];
-                        [技能时间[i] setHidden:NO];
-                        [大招时间[i] setHidden:NO];
-                        [大招图标视图[i] setHidden:NO];
-                        
                         
                     }
+                    
                     
                 }
                 //==================大地图野怪====================
@@ -530,7 +524,7 @@ static void NetGetHeroImage(int HeroID)
     NSData *data = [NSData dataWithContentsOfURL:url];
     if (data.length < 1000)
     {
-        for (int i=0; i<50; i++) {
+        for (int i=0; i<5; i++) {
             data = [NSData dataWithContentsOfURL:url];
             if (data.length > 1000) break;
         }
