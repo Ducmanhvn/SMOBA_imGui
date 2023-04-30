@@ -10,7 +10,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ImGuiDrawView : UIViewController
-+(void)showHiede;
++(void)showHiede:(BOOL)MenDeal;
 
 @end
 

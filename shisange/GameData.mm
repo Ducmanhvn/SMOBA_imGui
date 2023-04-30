@@ -2,7 +2,8 @@
 #include "Class.h"
 #import <mach-o/dyld.h>
 #import <mach/mach.h>
-
+#include <shisangeIMGUI/imgui_impl_metal.h>
+#include <shisangeIMGUI/imgui.h>
 #include <sys/sysctl.h>
 #import <string.h>
 #include <string>
@@ -12,68 +13,13 @@
 #import <dlfcn.h>
 long Imageaddress,Game_Data,Game_Viewport;
 Matrix ViewMatrix;
+std::vector<SmobaHeroData>Players;
 std::vector<SmobaMonsterData>野怪数据;
+std::vector<SmobaMonsterTime>野怪倒计时数据;
 
-extern "C" kern_return_t mach_vm_region_recurse(
-                                                vm_map_t                 map,
-                                                mach_vm_address_t        *address,
-                                                mach_vm_size_t           *size,
-                                                uint32_t                 *depth,
-                                                vm_region_recurse_info_t info,
-                                                mach_msg_type_number_t   *infoCnt);
-#pragma mark 读取get_task
-mach_port_t task;
-static int get_Pid(NSString* GameName) {
-    size_t length = 0;
-    static const int name[] = {CTL_KERN, KERN_PROC, KERN_PROC_ALL, 0};
-    int err = sysctl((int *)name, (sizeof(name) / sizeof(*name)) - 1, NULL, &length, NULL, 0);
-    if (err == -1) err = errno;
-    if (err == 0) {
-        struct kinfo_proc *procBuffer = (struct kinfo_proc *)malloc(length);
-        if(procBuffer == NULL) return -1;
-        sysctl((int *)name, (sizeof(name) / sizeof(*name)) - 1, procBuffer, &length, NULL, 0);
-        int count = (int)length / sizeof(struct kinfo_proc);
-        for (int i = 0; i < count; ++i) {
-            const char *procname = procBuffer[i].kp_proc.p_comm;
-            NSString *进程名字=[NSString stringWithFormat:@"%s",procname];
-            pid_t pid = procBuffer[i].kp_proc.p_pid;
-            //自己写判断进程名 和平精英
-            if([进程名字 containsString:GameName])
-            {
-                NSLog(@"pid==%d   %@",pid,进程名字);
-                return pid;
-            }
-        }
-    }
-    
-    return  -1;
-}
-static long get_base_address(NSString* GameName) {
-    vm_map_offset_t vmoffset = 0;
-    vm_map_size_t vmsize = 0;
-    uint32_t nesting_depth = 0;
-    struct vm_region_submap_info_64 vbr;
-    mach_msg_type_number_t vbrcount = 16;
-    pid_t pid =get_Pid(GameName);
-    
-    kern_return_t kret = task_for_pid(mach_task_self(), pid, &task);
-    if (kret == KERN_SUCCESS) {
-        NSLog(@"pid==task=%d   ",task);
-        mach_vm_region_recurse(task, &vmoffset, &vmsize, &nesting_depth, (vm_region_recurse_info_t)&vbr, &vbrcount);
-        return vmoffset;
-    }
-    return 0;
-}
-static bool Read_Data(long Src,int Size,void* Dst)
+static void Read_Data(long Src,int Size,void* Dst)
 {
-//    vm_copy(mach_task_self(),(vm_address_t)Src,Size,(vm_address_t)Dst);
-    vm_size_t size = 0;
-    
-    kern_return_t error = vm_read_overwrite(task, (vm_address_t)Src, Size, (vm_address_t)Dst, &size);
-    if(error != KERN_SUCCESS || size != Size) {
-        return false;
-    }
-    return true;
+    vm_copy(mach_task_self(),(vm_address_t)Src,Size,(vm_address_t)Dst);
 }
 
 static long Read_Long(long src)
@@ -106,13 +52,13 @@ static float Read_Float(long src)
 
 bool ToScreen(Vector2 GameCanvas,Vector2 HeroPos,Vector2* Screen)
 {
-    Screen->横轴x=0;Screen->大小=0;
+    Screen->x=0;Screen->y=0;
     float ViewW;
-    ViewW = ViewMatrix._13 * HeroPos.横轴x + ViewMatrix._33 * HeroPos.大小 + ViewMatrix._43;
+    ViewW = ViewMatrix._13 * HeroPos.x + ViewMatrix._33 * HeroPos.y + ViewMatrix._43;
     if (ViewW < 0.01) return false;
     ViewW = 1/ViewW;
-    Screen->横轴x = (1+(ViewMatrix._11 * HeroPos.横轴x + ViewMatrix._31 * HeroPos.大小 + ViewMatrix._41) * ViewW)*GameCanvas.横轴x/2;
-    Screen->大小 = (1-(ViewMatrix._12 * HeroPos.横轴x + ViewMatrix._32 * HeroPos.大小 + ViewMatrix._42) * ViewW)*GameCanvas.大小/2;
+    Screen->x = (1+(ViewMatrix._11 * HeroPos.x + ViewMatrix._31 * HeroPos.y + ViewMatrix._41) * ViewW)*GameCanvas.x/2;
+    Screen->y = (1-(ViewMatrix._12 * HeroPos.x + ViewMatrix._32 * HeroPos.y + ViewMatrix._42) * ViewW)*GameCanvas.y/2;
     return true;
 }
 
@@ -120,28 +66,27 @@ Vector2 ToMiniMap(Vector2 MiniMap,Vector2 HeroPos)
 {
     Vector2 Pos;
     float transformation = ViewMatrix._11>0?1:-1;
-    Pos.横轴x = (50 + HeroPos.横轴x*transformation)/100;
-    Pos.大小 = (50 - HeroPos.大小*transformation)/100;
+    Pos.x = (50 + HeroPos.x*transformation)/100;
+    Pos.y = (50 - HeroPos.y*transformation)/100;
     
-    return {MiniMap.横轴x + Pos.横轴x*MiniMap.大小,Pos.大小*MiniMap.大小};
+    return {MiniMap.x + Pos.x*MiniMap.y,Pos.y*MiniMap.y};
 }
 
 bool RefreshMatrix()
 {
     long P_Level1 = Read_Long(Game_Viewport+0xA0);
-    long P_Level2 = Read_Long(P_Level1);
-    long P_Level3 = Read_Long(P_Level2+0x10);
-    long Ptr_View =Read_Long(Read_Long(P_Level3 + 0x30)+0x30);
+    long P_Level2 = Read_Long(Read_Long(P_Level1)+0x10);
+    long P_Level3 = Read_Long(P_Level2+0x30);
+    long Ptr_View =Read_Long(P_Level3 + 0x30);
     if (Ptr_View < Imageaddress) return false;
     long P_ViewMatrix = Read_Long(Ptr_View+0x18)+0x2C8;
     Read_Data(P_ViewMatrix,64,&ViewMatrix);
     return true;
 }
 
-
 static Vector2 GetPlayerPos(long Target)
 {
-    long Target_P1 = Read_Long(Target+0x1d0);
+    long Target_P1 = Read_Long(Target+0x1D0);
     long Target_P2 = Read_Long(Target_P1+0x10);
     long Target_P3 = Read_Long(Target_P2);
     long Target_P4 = Read_Long(Target_P3 + 0x10);
@@ -176,6 +121,7 @@ static void GetHeroSkill(long Target,bool *Skill1,bool *Skill2,bool *Skill3,bool
     *Skill4 = GetKillActivate(P_Skill4);
 }
 
+
 static int GetPlayerTeam(long Target)
 {
     return Read_Int(Target+0x34);
@@ -209,7 +155,7 @@ static int32_t GetGameMaxHP(long Target){
 
 static int GetPlayerHero(long Target)
 {
-    return Read_Int(Target+0x28);
+    return Read_Int(Target+0x28);//影响id
 }
 static int GetPlayerHeroTalentTime(long Target){//召唤师偏移
     long PlayerTime1 = Read_Long(Target+ 0xF8);
@@ -231,22 +177,22 @@ static int GetGetHeroSkillTime(long Target){//大招偏移
     int HeroSkillTime = Target_P4/8192000;
     return HeroSkillTime;
 }
+
 void GetPlayers(std::vector<SmobaHeroData> *Players)
 {
     Players->clear();
-    野怪数据.clear();
-    long PDatas = Read_Long(Read_Long(Game_Data)+0x378);
+    long PDatas = *(long*)(*(long*)(Game_Data)+0x378);
     if (PDatas > Imageaddress)
     {
         
         int MyTeam = ViewMatrix._11>0?1:2;
-        long Array = Read_Long(PDatas+0x60);
-        int ArraySize = Read_Int(PDatas+0x7C);
+        long Array = *(long*)(PDatas+0x60);
+        int ArraySize = *(int*)(PDatas+0x7C);
         if (ArraySize > 0 && ArraySize <= 20)
         {
             
             for (int i=0; i < ArraySize; i++) {
-                long P_player = Read_Long(Array+i*0x18);
+                long P_player = *(long*)(Array+i*0x18);
                 if (P_player > Imageaddress){
                     SmobaHeroData HeroData;
                     HeroData.英雄ID = GetPlayerHero(P_player);
@@ -259,34 +205,72 @@ void GetPlayers(std::vector<SmobaHeroData> *Players)
                     HeroData.大招倒计时 = GetGetHeroSkillTime(P_player);
                     HeroData.HeroTalent = GetPlayerHeroTalent(P_player);
                     HeroData.仅能倒计时 = GetPlayerHeroTalentTime(P_player);
+                    
                     GetHeroSkill(P_player,&HeroData.Skill1,&HeroData.Skill2,&HeroData.Skill3,&HeroData.Skill4);
                     if (HeroData.HeroTeam != MyTeam)Players->push_back(HeroData);;
                 }
             }
         }
-        long Monster_Data = Read_Long(PDatas+0x148);
-        int Monster_Count = Read_Int(PDatas+0x164);
+        
+        
+        
+    }
+}
+void GetMonster(std::vector<SmobaMonsterData> *野怪数据)
+{
+    野怪数据->clear();
+    long PDatas = *(long*)(*(long*)(Game_Data)+0x378);
+    if (PDatas > Imageaddress)
+    {
+        
+        long Monster_Data = *(long*)(PDatas+0x148);
+        int Monster_Count = *(int*)(PDatas+0x164);
+        NSLog(@"Monster_Count=%d",Monster_Count);
         for (int i=0; i < Monster_Count; i++) {
             SmobaMonsterData Monster;
-            long P_Monster = Read_Long(Monster_Data+i*0x18);
-            Monster.MonsterID = GetPlayerHero(P_Monster);
+            long P_Monster = *(long*)(Monster_Data+i*0x18);
+            Monster.野怪ID = GetPlayerHero(P_Monster);
             Monster.野怪当前血量 = GetGameHP(P_Monster);
             Monster.野怪最大血量 = GetGameMaxHP(P_Monster);
             Monster.MonsterPos = GetPlayerPos(P_Monster);
-            野怪数据.push_back(Monster);
+            
+            野怪数据->push_back(Monster);
         }
         
     }
 }
 
+void GetMonsterTime(std::vector<SmobaMonsterTime> *野怪倒计时数据)
+{
+    野怪倒计时数据->clear();
+    int64_t MsWorld = *(long long*)(Imageaddress + 0x10CC33DC8);
+    int64_t MsDead = *(long long*)(MsWorld + 0x3A8);
+    int64_t MsMonsterDataV1 = *(long long*)(MsDead + 0x88);
+    int64_t MsMonsterDataV3 = *(long long*)(MsMonsterDataV1 + 0x120);
+    int MonsterDeathArr[16] = {0,24,264,408,432,456,360,48,72,384,288,312,336,240,192,216};
+    for (int i = 0; i < 16; i++) {
+        int64_t DeathMonster = *(long long*)(MsMonsterDataV3 + MonsterDeathArr[i]);
+        int32_t MonsterTime = *(int32_t*)(DeathMonster + 0x238)/1000 +3; //0x230
+        if (!MonsterTime)continue;
+        int32_t MonsterTimeMax = *(int32_t*)(DeathMonster + 0x1E4)/1000 +3;
+        if (!MonsterTimeMax)continue;
+        Vector2 MonsterLoc = MsMonsterLocFun(MonsterDeathArr[i]);
+        if (!MonsterLoc.x&&!MonsterLoc.y)continue;
+        SmobaMonsterTime Monstertime;
+        Monstertime.野怪ID=MonsterDeathArr[i];
+        Monstertime.野怪倒计时=MonsterTime;
+        野怪倒计时数据->push_back(Monstertime);
+    }
+    
+}
+
 bool Gameinitialization()
 {
-    Imageaddress = get_base_address(@"smoba");
-    Game_Data = Read_Long(Imageaddress+0xE2ACA50);
-    Game_Viewport = Read_Long(Imageaddress+0xCDE16C8);
-    NSLog(@"vmm=Imageaddress=0x%lx  Game_Data=0x%lx",Imageaddress,Game_Data);
-    if(Game_Data > 0 || Game_Viewport > 0){
-        return true;
-    }
-    return false;
+    Imageaddress = _dyld_get_image_vmaddr_slide(0);
+    NSLog(@"Imageaddress=0x%lx",Imageaddress);
+    Game_Data = Read_Long(Imageaddress+0x10E2ACA50);
+    NSLog(@"Game_Data=0x%lx",Game_Data);
+    Game_Viewport = Read_Long(Imageaddress+0x10CDE16C8);
+    NSLog(@"Game_Viewport=0x%lx",Game_Viewport);
+    return Game_Data > Imageaddress && Game_Viewport > Imageaddress;
 }

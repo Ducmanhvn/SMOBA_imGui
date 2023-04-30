@@ -20,6 +20,7 @@ static float 初始音量;
 + (void)load
 {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1* NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        NSLog(@"load");
         extraInfo =  [PubgLoad alloc];
         [extraInfo jtyl];
     });
@@ -58,7 +59,7 @@ static BOOL MenDeal;
         _vna = vc;
     }
     
-    [ImGuiDrawView showHiede];
+    [ImGuiDrawView showHiede:MenDeal];
     [[UIApplication sharedApplication].keyWindow addSubview:_vna.view];//imgui 添加到顶层视图
 
 }

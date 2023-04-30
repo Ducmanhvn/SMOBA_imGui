@@ -7,91 +7,40 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6055E30429FEA23D0014C600 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6055E30329FEA23C0014C600 /* AVFoundation.framework */; };
+		6055E30629FEA3910014C600 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6055E30529FEA3910014C600 /* CFNetwork.framework */; };
+		6055E30829FEA3970014C600 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6055E30729FEA3970014C600 /* AdSupport.framework */; };
+		6055E30A29FEA39F0014C600 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6055E30929FEA39F0014C600 /* CoreGraphics.framework */; };
+		6055E30C29FEA3A20014C600 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6055E30B29FEA3A20014C600 /* QuartzCore.framework */; };
+		6055E30E29FEA4A00014C600 /* shisangeIMGUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6055E30D29FEA4A00014C600 /* shisangeIMGUI.framework */; };
 		60D86A7229F901DC007433D4 /* PubgLoad.h in Headers */ = {isa = PBXBuildFile; fileRef = 60D86A5929F901DC007433D4 /* PubgLoad.h */; };
 		60D86A7529F901DC007433D4 /* ImGuiDrawView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 60D86A5C29F901DC007433D4 /* ImGuiDrawView.mm */; };
 		60D86A7629F901DC007433D4 /* PubgLoad.mm in Sources */ = {isa = PBXBuildFile; fileRef = 60D86A5D29F901DC007433D4 /* PubgLoad.mm */; };
 		60D86A7929F901DC007433D4 /* ImGuiDrawView.h in Headers */ = {isa = PBXBuildFile; fileRef = 60D86A6029F901DC007433D4 /* ImGuiDrawView.h */; };
 		60D86A7B29F90C1B007433D4 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60D86A7A29F90C1B007433D4 /* MetalKit.framework */; };
 		60D86A7D29F90C2A007433D4 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60D86A7C29F90C2A007433D4 /* Metal.framework */; };
-		60D86D1129F9889D007433D4 /* ImGuiWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 60D86D0929F9889C007433D4 /* ImGuiWrapper.h */; };
-		60D86D1229F9889D007433D4 /* ImGuiStyleWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 60D86D0A29F9889C007433D4 /* ImGuiStyleWrapper.h */; };
-		60D86D1329F9889D007433D4 /* GuiRenderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 60D86D0B29F9889C007433D4 /* GuiRenderer.mm */; };
-		60D86D1529F9889D007433D4 /* ImGuiStyleWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 60D86D0D29F9889C007433D4 /* ImGuiStyleWrapper.mm */; };
-		60D86D1629F9889D007433D4 /* ImGuiWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 60D86D0E29F9889C007433D4 /* ImGuiWrapper.mm */; };
-		60D86D1829F9889D007433D4 /* GuiRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 60D86D1029F9889D007433D4 /* GuiRenderer.h */; };
-		60D86D2B29F988ED007433D4 /* imgui_impl_metal.mm in Sources */ = {isa = PBXBuildFile; fileRef = 60D86D1F29F988EC007433D4 /* imgui_impl_metal.mm */; };
-		60D86D2C29F988ED007433D4 /* imgui_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 60D86D2029F988EC007433D4 /* imgui_internal.h */; };
-		60D86D2D29F988ED007433D4 /* imgui_impl_metal.h in Headers */ = {isa = PBXBuildFile; fileRef = 60D86D2129F988EC007433D4 /* imgui_impl_metal.h */; };
-		60D86D2E29F988ED007433D4 /* imgui_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 60D86D2229F988EC007433D4 /* imgui_draw.cpp */; };
-		60D86D2F29F988ED007433D4 /* imgui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 60D86D2329F988EC007433D4 /* imgui.cpp */; };
-		60D86D3029F988ED007433D4 /* imstb_textedit.h in Headers */ = {isa = PBXBuildFile; fileRef = 60D86D2429F988EC007433D4 /* imstb_textedit.h */; };
-		60D86D3129F988ED007433D4 /* imgui_demo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 60D86D2529F988ED007433D4 /* imgui_demo.cpp */; };
-		60D86D3229F988ED007433D4 /* imconfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 60D86D2629F988ED007433D4 /* imconfig.h */; };
-		60D86D3329F988ED007433D4 /* imgui_widgets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 60D86D2729F988ED007433D4 /* imgui_widgets.cpp */; };
-		60D86D3429F988ED007433D4 /* imstb_rectpack.h in Headers */ = {isa = PBXBuildFile; fileRef = 60D86D2829F988ED007433D4 /* imstb_rectpack.h */; };
-		60D86D3529F988ED007433D4 /* imgui.h in Headers */ = {isa = PBXBuildFile; fileRef = 60D86D2929F988ED007433D4 /* imgui.h */; };
-		60D86D3629F988ED007433D4 /* imstb_truetype.h in Headers */ = {isa = PBXBuildFile; fileRef = 60D86D2A29F988ED007433D4 /* imstb_truetype.h */; };
 		EA203E9028FB07300008CF79 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA203E8F28FB07300008CF79 /* UIKit.framework */; };
-		EA203E9228FB07330008CF79 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA203E9128FB07330008CF79 /* CFNetwork.framework */; };
-		EA203E9428FB073B0008CF79 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA203E9328FB073B0008CF79 /* Accelerate.framework */; };
-		EA203E9628FB073F0008CF79 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA203E9528FB073F0008CF79 /* AudioToolbox.framework */; };
-		EA203E9828FB07490008CF79 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA203E9728FB07490008CF79 /* CoreGraphics.framework */; };
-		EA203E9A28FB075A0008CF79 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA203E9928FB075A0008CF79 /* QuartzCore.framework */; };
-		EA203E9C28FB07710008CF79 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA203E9B28FB07710008CF79 /* AdSupport.framework */; };
-		EA203E9E28FB077A0008CF79 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA203E9D28FB077A0008CF79 /* SystemConfiguration.framework */; };
-		EA203EA028FB07860008CF79 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA203E9F28FB07860008CF79 /* Security.framework */; };
-		EA203EA128FB078E0008CF79 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA203E9B28FB07710008CF79 /* AdSupport.framework */; };
-		EA203EA328FB079C0008CF79 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA203EA228FB079C0008CF79 /* AVFoundation.framework */; };
-		EA203EA528FB07AF0008CF79 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA203EA428FB07AF0008CF79 /* MobileCoreServices.framework */; };
 		EAC4AE67292552B900FA702B /* Class.h in Headers */ = {isa = PBXBuildFile; fileRef = EAC4AE64292552B800FA702B /* Class.h */; };
 		EAC4AE68292552B900FA702B /* GameData.mm in Sources */ = {isa = PBXBuildFile; fileRef = EAC4AE65292552B800FA702B /* GameData.mm */; };
-		EAC4AE69292552B900FA702B /* Smoba.mm in Sources */ = {isa = PBXBuildFile; fileRef = EAC4AE66292552B900FA702B /* Smoba.mm */; };
-		EAC4AF9D2931DFAE00FA702B /* Smoba.h in Headers */ = {isa = PBXBuildFile; fileRef = EAC4AF9C2931DFAE00FA702B /* Smoba.h */; };
-		EAC96A93290283A300F94C4F /* vm_writeData.h in Headers */ = {isa = PBXBuildFile; fileRef = EAC96A92290283A300F94C4F /* vm_writeData.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6055E30329FEA23C0014C600 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		6055E30529FEA3910014C600 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		6055E30729FEA3970014C600 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
+		6055E30929FEA39F0014C600 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		6055E30B29FEA3A20014C600 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		6055E30D29FEA4A00014C600 /* shisangeIMGUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = shisangeIMGUI.framework; sourceTree = "<group>"; };
 		60D86A5929F901DC007433D4 /* PubgLoad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PubgLoad.h; sourceTree = "<group>"; };
 		60D86A5C29F901DC007433D4 /* ImGuiDrawView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImGuiDrawView.mm; sourceTree = "<group>"; };
 		60D86A5D29F901DC007433D4 /* PubgLoad.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PubgLoad.mm; sourceTree = "<group>"; };
 		60D86A6029F901DC007433D4 /* ImGuiDrawView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImGuiDrawView.h; sourceTree = "<group>"; };
 		60D86A7A29F90C1B007433D4 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
 		60D86A7C29F90C2A007433D4 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
-		60D86D0929F9889C007433D4 /* ImGuiWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImGuiWrapper.h; sourceTree = "<group>"; };
-		60D86D0A29F9889C007433D4 /* ImGuiStyleWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImGuiStyleWrapper.h; sourceTree = "<group>"; };
-		60D86D0B29F9889C007433D4 /* GuiRenderer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GuiRenderer.mm; sourceTree = "<group>"; };
-		60D86D0D29F9889C007433D4 /* ImGuiStyleWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImGuiStyleWrapper.mm; sourceTree = "<group>"; };
-		60D86D0E29F9889C007433D4 /* ImGuiWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImGuiWrapper.mm; sourceTree = "<group>"; };
-		60D86D1029F9889D007433D4 /* GuiRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GuiRenderer.h; sourceTree = "<group>"; };
-		60D86D1F29F988EC007433D4 /* imgui_impl_metal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = imgui_impl_metal.mm; sourceTree = "<group>"; };
-		60D86D2029F988EC007433D4 /* imgui_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imgui_internal.h; sourceTree = "<group>"; };
-		60D86D2129F988EC007433D4 /* imgui_impl_metal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imgui_impl_metal.h; sourceTree = "<group>"; };
-		60D86D2229F988EC007433D4 /* imgui_draw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imgui_draw.cpp; sourceTree = "<group>"; };
-		60D86D2329F988EC007433D4 /* imgui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imgui.cpp; sourceTree = "<group>"; };
-		60D86D2429F988EC007433D4 /* imstb_textedit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imstb_textedit.h; sourceTree = "<group>"; };
-		60D86D2529F988ED007433D4 /* imgui_demo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imgui_demo.cpp; sourceTree = "<group>"; };
-		60D86D2629F988ED007433D4 /* imconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imconfig.h; sourceTree = "<group>"; };
-		60D86D2729F988ED007433D4 /* imgui_widgets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = imgui_widgets.cpp; sourceTree = "<group>"; };
-		60D86D2829F988ED007433D4 /* imstb_rectpack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imstb_rectpack.h; sourceTree = "<group>"; };
-		60D86D2929F988ED007433D4 /* imgui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imgui.h; sourceTree = "<group>"; };
-		60D86D2A29F988ED007433D4 /* imstb_truetype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = imstb_truetype.h; sourceTree = "<group>"; };
 		CD7019F2283E76A3006DC3F7 /* 王者绘制.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = "王者绘制.dylib"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA203E8F28FB07300008CF79 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		EA203E9128FB07330008CF79 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
-		EA203E9328FB073B0008CF79 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
-		EA203E9528FB073F0008CF79 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		EA203E9728FB07490008CF79 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		EA203E9928FB075A0008CF79 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		EA203E9B28FB07710008CF79 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
-		EA203E9D28FB077A0008CF79 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		EA203E9F28FB07860008CF79 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		EA203EA228FB079C0008CF79 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		EA203EA428FB07AF0008CF79 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		EAC4AE64292552B800FA702B /* Class.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Class.h; sourceTree = "<group>"; };
 		EAC4AE65292552B800FA702B /* GameData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GameData.mm; sourceTree = "<group>"; };
-		EAC4AE66292552B900FA702B /* Smoba.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Smoba.mm; sourceTree = "<group>"; };
-		EAC4AF9C2931DFAE00FA702B /* Smoba.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Smoba.h; sourceTree = "<group>"; };
-		EAC96A92290283A300F94C4F /* vm_writeData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vm_writeData.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,40 +48,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EA203E9428FB073B0008CF79 /* Accelerate.framework in Frameworks */,
-				EA203EA128FB078E0008CF79 /* AdSupport.framework in Frameworks */,
+				6055E30E29FEA4A00014C600 /* shisangeIMGUI.framework in Frameworks */,
+				6055E30C29FEA3A20014C600 /* QuartzCore.framework in Frameworks */,
+				6055E30A29FEA39F0014C600 /* CoreGraphics.framework in Frameworks */,
+				6055E30829FEA3970014C600 /* AdSupport.framework in Frameworks */,
+				6055E30629FEA3910014C600 /* CFNetwork.framework in Frameworks */,
+				6055E30429FEA23D0014C600 /* AVFoundation.framework in Frameworks */,
 				60D86A7D29F90C2A007433D4 /* Metal.framework in Frameworks */,
-				EA203EA328FB079C0008CF79 /* AVFoundation.framework in Frameworks */,
-				EA203E9228FB07330008CF79 /* CFNetwork.framework in Frameworks */,
-				EA203E9A28FB075A0008CF79 /* QuartzCore.framework in Frameworks */,
 				EA203E9028FB07300008CF79 /* UIKit.framework in Frameworks */,
-				EA203E9828FB07490008CF79 /* CoreGraphics.framework in Frameworks */,
-				EA203E9628FB073F0008CF79 /* AudioToolbox.framework in Frameworks */,
-				EA203E9E28FB077A0008CF79 /* SystemConfiguration.framework in Frameworks */,
 				60D86A7B29F90C1B007433D4 /* MetalKit.framework in Frameworks */,
-				EA203EA528FB07AF0008CF79 /* MobileCoreServices.framework in Frameworks */,
-				EA203EA028FB07860008CF79 /* Security.framework in Frameworks */,
-				EA203E9C28FB07710008CF79 /* AdSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		60D86A4429F901DB007433D4 /* imGui */ = {
-			isa = PBXGroup;
-			children = (
-				60D86D1E29F988C9007433D4 /* imguiC+ */,
-				60D86D1029F9889D007433D4 /* GuiRenderer.h */,
-				60D86D0B29F9889C007433D4 /* GuiRenderer.mm */,
-				60D86D0A29F9889C007433D4 /* ImGuiStyleWrapper.h */,
-				60D86D0D29F9889C007433D4 /* ImGuiStyleWrapper.mm */,
-				60D86D0929F9889C007433D4 /* ImGuiWrapper.h */,
-				60D86D0E29F9889C007433D4 /* ImGuiWrapper.mm */,
-			);
-			path = imGui;
-			sourceTree = "<group>";
-		};
 		60D86A5829F901DC007433D4 /* 菜单激活 */ = {
 			isa = PBXGroup;
 			children = (
@@ -144,30 +74,10 @@
 			path = "菜单激活";
 			sourceTree = "<group>";
 		};
-		60D86D1E29F988C9007433D4 /* imguiC+ */ = {
-			isa = PBXGroup;
-			children = (
-				60D86D2629F988ED007433D4 /* imconfig.h */,
-				60D86D2529F988ED007433D4 /* imgui_demo.cpp */,
-				60D86D2229F988EC007433D4 /* imgui_draw.cpp */,
-				60D86D2129F988EC007433D4 /* imgui_impl_metal.h */,
-				60D86D1F29F988EC007433D4 /* imgui_impl_metal.mm */,
-				60D86D2029F988EC007433D4 /* imgui_internal.h */,
-				60D86D2729F988ED007433D4 /* imgui_widgets.cpp */,
-				60D86D2329F988EC007433D4 /* imgui.cpp */,
-				60D86D2929F988ED007433D4 /* imgui.h */,
-				60D86D2829F988ED007433D4 /* imstb_rectpack.h */,
-				60D86D2429F988EC007433D4 /* imstb_textedit.h */,
-				60D86D2A29F988ED007433D4 /* imstb_truetype.h */,
-			);
-			path = "imguiC+";
-			sourceTree = "<group>";
-		};
 		CD7019E8283E76A3006DC3F7 = {
 			isa = PBXGroup;
 			children = (
 				60D86A5829F901DC007433D4 /* 菜单激活 */,
-				60D86A4429F901DB007433D4 /* imGui */,
 				CD78082B28D8602200005BF6 /* shisange */,
 				CD7019F4283E76A3006DC3F7 /* Frameworks */,
 				CD7019F3283E76A3006DC3F7 /* Products */,
@@ -185,18 +95,14 @@
 		CD7019F4283E76A3006DC3F7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6055E30D29FEA4A00014C600 /* shisangeIMGUI.framework */,
+				6055E30B29FEA3A20014C600 /* QuartzCore.framework */,
+				6055E30929FEA39F0014C600 /* CoreGraphics.framework */,
+				6055E30729FEA3970014C600 /* AdSupport.framework */,
+				6055E30529FEA3910014C600 /* CFNetwork.framework */,
+				6055E30329FEA23C0014C600 /* AVFoundation.framework */,
 				60D86A7C29F90C2A007433D4 /* Metal.framework */,
 				60D86A7A29F90C1B007433D4 /* MetalKit.framework */,
-				EA203EA428FB07AF0008CF79 /* MobileCoreServices.framework */,
-				EA203EA228FB079C0008CF79 /* AVFoundation.framework */,
-				EA203E9F28FB07860008CF79 /* Security.framework */,
-				EA203E9D28FB077A0008CF79 /* SystemConfiguration.framework */,
-				EA203E9B28FB07710008CF79 /* AdSupport.framework */,
-				EA203E9928FB075A0008CF79 /* QuartzCore.framework */,
-				EA203E9728FB07490008CF79 /* CoreGraphics.framework */,
-				EA203E9528FB073F0008CF79 /* AudioToolbox.framework */,
-				EA203E9328FB073B0008CF79 /* Accelerate.framework */,
-				EA203E9128FB07330008CF79 /* CFNetwork.framework */,
 				EA203E8F28FB07300008CF79 /* UIKit.framework */,
 			);
 			name = Frameworks;
@@ -207,9 +113,6 @@
 			children = (
 				EAC4AE64292552B800FA702B /* Class.h */,
 				EAC4AE65292552B800FA702B /* GameData.mm */,
-				EAC4AE66292552B900FA702B /* Smoba.mm */,
-				EAC4AF9C2931DFAE00FA702B /* Smoba.h */,
-				EAC96A92290283A300F94C4F /* vm_writeData.h */,
 			);
 			path = shisange;
 			sourceTree = "<group>";
@@ -221,21 +124,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EAC96A93290283A300F94C4F /* vm_writeData.h in Headers */,
-				60D86D3429F988ED007433D4 /* imstb_rectpack.h in Headers */,
-				60D86D3229F988ED007433D4 /* imconfig.h in Headers */,
-				60D86D3529F988ED007433D4 /* imgui.h in Headers */,
 				60D86A7229F901DC007433D4 /* PubgLoad.h in Headers */,
-				60D86D1129F9889D007433D4 /* ImGuiWrapper.h in Headers */,
-				60D86D3629F988ED007433D4 /* imstb_truetype.h in Headers */,
-				60D86D2C29F988ED007433D4 /* imgui_internal.h in Headers */,
 				EAC4AE67292552B900FA702B /* Class.h in Headers */,
-				60D86D1829F9889D007433D4 /* GuiRenderer.h in Headers */,
-				EAC4AF9D2931DFAE00FA702B /* Smoba.h in Headers */,
-				60D86D3029F988ED007433D4 /* imstb_textedit.h in Headers */,
-				60D86D1229F9889D007433D4 /* ImGuiStyleWrapper.h in Headers */,
 				60D86A7929F901DC007433D4 /* ImGuiDrawView.h in Headers */,
-				60D86D2D29F988ED007433D4 /* imgui_impl_metal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -316,18 +207,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				60D86D2B29F988ED007433D4 /* imgui_impl_metal.mm in Sources */,
-				60D86D2F29F988ED007433D4 /* imgui.cpp in Sources */,
-				60D86D1329F9889D007433D4 /* GuiRenderer.mm in Sources */,
-				60D86D1529F9889D007433D4 /* ImGuiStyleWrapper.mm in Sources */,
-				60D86D2E29F988ED007433D4 /* imgui_draw.cpp in Sources */,
 				EAC4AE68292552B900FA702B /* GameData.mm in Sources */,
-				EAC4AE69292552B900FA702B /* Smoba.mm in Sources */,
 				60D86A7529F901DC007433D4 /* ImGuiDrawView.mm in Sources */,
 				60D86A7629F901DC007433D4 /* PubgLoad.mm in Sources */,
-				60D86D1629F9889D007433D4 /* ImGuiWrapper.mm in Sources */,
-				60D86D3129F988ED007433D4 /* imgui_demo.cpp in Sources */,
-				60D86D3329F988ED007433D4 /* imgui_widgets.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
